@@ -1,18 +1,13 @@
-import java.util.Scanner;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 import javax.swing.Timer;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import javax.swing.JFrame;
-import java.util.Set;
-import java.util.HashSet;
+import javax.swing.*;
+import java.awt.event.*;
 
 public class FIFO {
 	
 	public static Scanner input = new Scanner(System.in);
-	public static Queue<Integer> pageQueue = new LinkedList<>();
+	public static ArrayList<Integer> pageFrames = new ArrayList<>();
+	public static Queue<Integer> queue = new LinkedList<>();
 	public static Set<Integer> pageSet = new HashSet<>();
 	public static ArrayList<Integer> referenceStringValues = new ArrayList<>();
 	public static String referenceString;
@@ -63,15 +58,21 @@ public class FIFO {
 						pageFaults++;
 						System.out.println("Page fault! Page " + page + " not in frames.");
 						
-						// if the queue is full, remove the oldest page
-						if (pageQueue.size() == numFrames) {
-							int removedPage = pageQueue.poll();
+						// if frames are full, remove the oldest page but replace it in the same position
+						if (pageFrames.size() == numFrames) {
+							int removedPage = queue.poll();
+							int indexToReplace = pageFrames.indexOf(removedPage); // Get index of the oldest page
 							pageSet.remove(removedPage);
+							pageFrames.set(indexToReplace, page); // Replace the page in the same position
+							queue.add(page);
 							System.out.println("Removed page: " + removedPage);
+						} else {
+							// Add page normally if there's still space
+							pageFrames.add(page);
+							queue.add(page);
 						}
 						
-						// add the new page to the queue and set
-						pageQueue.add(page);
+						// Add the new page to the set
 						pageSet.add(page);
 					} else {
 						System.out.println("Page hit! Page " + page + " already in frames.");
@@ -93,7 +94,7 @@ public class FIFO {
 	
 	public static void printPageFrames() {
 		System.out.print("Current Frames: ");
-		for (int frame : pageQueue) {
+		for (int frame : pageFrames) {
 			System.out.print(frame + " ");
 		}
 		System.out.println();
