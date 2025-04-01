@@ -16,7 +16,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 
 public class StartPage extends Panels implements ActionListener{
     
@@ -56,7 +55,7 @@ public class StartPage extends Panels implements ActionListener{
         /// selection panel ///
         
         selectionPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0,5));
-        selectionPanel.setPreferredSize(new Dimension (900, 570));
+        selectionPanel.setPreferredSize(new Dimension (900, 580));
         selectionPanel.setBackground(green);
         selectionPanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(white, 1), 
@@ -141,11 +140,7 @@ public class StartPage extends Panels implements ActionListener{
         selectionPanel.add(buttonPanel);
         
         errorLabel = createLabel(1000, 20, white, "", 20);
-<<<<<<< HEAD
         errorLabel.setHorizontalAlignment(center);
-=======
-        errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
->>>>>>> 3f01dbd5fc386ecdad8872b5df491adb0a8281fc
         
         add(titlePanel);
         add(selectionPanel);
@@ -242,11 +237,7 @@ public class StartPage extends Panels implements ActionListener{
         return true;
     }
     
-<<<<<<< HEAD
     public boolean validateInput(){
-=======
-    private boolean validateInput(){
->>>>>>> 3f01dbd5fc386ecdad8872b5df491adb0a8281fc
         String algorithm = algorithmField.getText();
         String frames = framesField.getText();
         String length = lengthField.getText();
