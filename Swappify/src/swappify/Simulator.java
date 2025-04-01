@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 package swappify;
 
 import java.util.ArrayList;
@@ -45,4 +46,18 @@ public class Simulator {
     public int getReferenceLength(){
         return length;
     }
+=======
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package swappify;
+
+/**
+ *
+ * @author User
+ */
+public class Simulator {
+    
+>>>>>>> 3f01dbd5fc386ecdad8872b5df491adb0a8281fc
 }
