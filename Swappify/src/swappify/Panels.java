@@ -6,11 +6,10 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -35,6 +34,7 @@ public class Panels extends JPanel{
     public final Icon smallLogoIcon = new ImageIcon(smallLogo);
     
     public final Color gray = new Color(118, 130, 138);
+    public final Color transparent = new Color(0,0,0,0);
     public final Color white = Color.WHITE;
     public final Color black = Color.BLACK;
     public final Color green = new Color(24,121,76);
@@ -49,6 +49,18 @@ public class Panels extends JPanel{
         
     }
     
+    public JButton createButton(int width, int height, String text, Color background, Color foreground, int size, ActionListener l) {
+        JButton button = new JButton(text);
+        button.setBackground(background);
+        button.setForeground(foreground);
+        button.setPreferredSize(new Dimension(width, height));
+        button.setFont(archivoblack.deriveFont(Font.BOLD, size));
+        button.setFocusable(false);
+        button.setBorderPainted(false);
+        button.addActionListener(l);
+        return button;
+    }
+    
     public JButton createButton(int width, int height, String text, Color background, Color foreground, int size) {
         JButton button = new JButton(text);
         button.setBackground(background);
@@ -60,7 +72,7 @@ public class Panels extends JPanel{
         return button;
     }
     
-    public JButton createButton(int width, int height, String text, Color background, Color foreground, Color border, float size) {
+    public JButton createButton(int width, int height, String text, Color background, Color foreground, Color border, float size, ActionListener l) {
         JButton button = new JButton(text);
         button.setBackground(background);
         button.setForeground(foreground);
@@ -68,8 +80,10 @@ public class Panels extends JPanel{
         button.setFont(archivoblack.deriveFont(size));
         button.setFocusable(false);
         button.setBorder(BorderFactory.createLineBorder(foreground, 2));
+        button.addActionListener(l);
         return button;
     }
+    
     
     public Font getFont(String filepath){
         try {

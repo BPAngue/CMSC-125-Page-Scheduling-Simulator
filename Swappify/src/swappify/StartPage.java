@@ -1,21 +1,31 @@
 package swappify;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Random;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class StartPage extends Panels{
+public class StartPage extends Panels implements ActionListener{
     
     private JPanel titlePanel, selectionPanel, algorithmPanel,outlinePanel, buttonPanel;
     private JLabel titleLabel, selectLabel, outlineLabel, algorithmLabel, framesLabel, lengthLabel, rstringLabel; 
     public JTextField algorithmField, framesField, lengthField, rstringField;
-    public JButton backButton, fifoButton, lruButton, optButton, scButton, escButton, lfuButton, mfuButton, allButton, generateButton, resetButton;
+    public JButton backButton, fifoButton, lruButton, optButton, scButton, escButton, lfuButton, mfuButton, allButton, 
+            generateButton, resetButton, randomButton, textButton;
+    
+    public ArrayList<String> stringDetails = new ArrayList<>();
     
     
     public StartPage(){
@@ -36,7 +46,7 @@ public class StartPage extends Panels{
         titleLabel = new JLabel();
         titleLabel.setPreferredSize(new Dimension(300, 100));
         titleLabel.setIcon(smallLogoIcon);
-        backButton = createButton(150, 40, "BACK", gray, white, 20);
+        backButton = createButton(150, 40, "BACK", gray, white,20, this);
         
         titlePanel.add(titleLabel);
         titlePanel.add(backButton);
@@ -58,16 +68,16 @@ public class StartPage extends Panels{
         algorithmPanel.setOpaque(false);
         algorithmPanel.setPreferredSize(new Dimension(870, 150));
         
-        fifoButton = createButton(192, 60, "FIFO", darkgreen, white,white, 16);
-        lruButton = createButton(192, 60, "LRU", darkgreen, white, white,16);
-        optButton = createButton(192, 60, "OPT", darkgreen, white, white, 16);
+        fifoButton = createButton(192, 60, "FIFO", darkgreen, white,white, 16, this);
+        lruButton = createButton(192, 60, "LRU", darkgreen, white, white,16, this);
+        optButton = createButton(192, 60, "OPT", darkgreen, white, white, 16, this);
         scButton = createButton(192, 60, "<html><body style='text-align:center;'>Second<br>Chance</body></html>", 
-                darkgreen, white, white, 16);
+                darkgreen, white, white, 16, this);
         escButton = createButton(192, 60, "<html><body style='text-align:center;'>Enhanced<br>Second Chance</body></html>", 
-                darkgreen, white, white, 16);
-        lfuButton = createButton(192, 60, "LFU", darkgreen, white, white,16);
-        mfuButton = createButton(192, 60, "MFU", darkgreen, white, white,16);
-        allButton = createButton(192, 60, "ALL", darkgreen, white, white,16);
+                darkgreen, white, white, 16, this);
+        lfuButton = createButton(192, 60, "LFU", darkgreen, white, white,16, this);
+        mfuButton = createButton(192, 60, "MFU", darkgreen, white, white,16, this);
+        allButton = createButton(192, 60, "ALL", darkgreen, white, white,16, this);
 
         algorithmPanel.add(fifoButton);
         algorithmPanel.add(lruButton);
@@ -112,9 +122,13 @@ public class StartPage extends Panels{
         buttonPanel.setPreferredSize(new Dimension(900, 60));
         buttonPanel.setOpaque(false);
         
-        generateButton = createButton(190, 40, "Generate", darkgreen, white, white,16);
-        resetButton = createButton(190, 40, "Reset", red, white,white, 16);
+        generateButton = createButton(190, 40, "Generate", darkgreen, white, white,16, this);
+        resetButton = createButton(190, 40, "Reset", red, white,white, 16, this);
+        randomButton = createButton(190, 40, "Random Input", darkgreen, white, white,16, this);
+        textButton = createButton(190, 40, "Text File Input", darkgreen, white, white,16, this);
         
+        buttonPanel.add(randomButton);
+        buttonPanel.add(textButton);
         buttonPanel.add(generateButton);
         buttonPanel.add(resetButton);
         
@@ -126,5 +140,110 @@ public class StartPage extends Panels{
         
         add(titlePanel);
         add(selectionPanel);
+    }
+
+    private void clearInputs(){
+        algorithmField.setText("");
+        framesField.setText("");
+        lengthField.setText("");
+        rstringField.setText("");
+    }
+    
+    private void generateRandomInput(){
+        Random r = new Random();
+        int randomFrames = r.nextInt(3, 11);
+        int randomLength = r.nextInt(10, 40);
+        
+        framesField.setText(String.valueOf(randomFrames));
+        lengthField.setText(String.valueOf(randomLength));
+        
+        String randomString = "";
+        
+        for (int i=0; i<randomLength; i++){
+            randomString = randomString + String.valueOf(r.nextInt(0, 21)) + " ";
+        }
+        
+        rstringField.setText(randomString);
+    }
+    
+    private File uploadFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        int returnValue = fileChooser.showOpenDialog(null);
+        
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            System.out.println("File selected: " + selectedFile.getAbsolutePath());
+            return selectedFile;
+        } else {
+            System.out.println("File selection cancelled.");
+            return null;
+        }
+    }
+    
+     private void readFile(File file) {
+         
+        if (file == null) {
+            System.out.println("No file to read.");
+            return;
+        }
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                stringDetails.add(line.trim());
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+        }  
+    }
+     
+    private void generateTextInput(){
+        readFile(uploadFile());
+        
+        /* for debugging 
+        for(String i : stringDetails){
+            System.out.println(i);
+        } */
+        
+        framesField.setText(stringDetails.get(0));
+        lengthField.setText(stringDetails.get(1));
+        rstringField.setText(stringDetails.get(2));
+    }
+    
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(e.getSource()==fifoButton){
+            algorithmField.setText(fifoButton.getText());
+        }
+        else if(e.getSource()==lruButton){
+            algorithmField.setText(lruButton.getText());
+        }
+        else if(e.getSource()==optButton){
+            algorithmField.setText(optButton.getText());
+        }
+        else if(e.getSource()==scButton){
+            algorithmField.setText("Second Chance");
+        }
+        else if(e.getSource()==escButton){
+            algorithmField.setText("Enhanced Second Chance");
+        }
+        else if(e.getSource()==lfuButton){
+            algorithmField.setText(lfuButton.getText());
+        }
+        else if(e.getSource()==mfuButton){
+            algorithmField.setText(mfuButton.getText());
+        }
+        else if(e.getSource()==allButton){
+            algorithmField.setText(allButton.getText());
+        }
+        else if(e.getSource()==randomButton){
+            generateRandomInput();
+        }
+        else if(e.getSource()==textButton){
+            generateTextInput();
+        }
+        else if(e.getSource()==resetButton || e.getSource()==backButton){
+            clearInputs();
+        }
     }
 }
