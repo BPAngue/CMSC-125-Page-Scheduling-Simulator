@@ -16,7 +16,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 
 public class StartPage extends Panels implements ActionListener{
     
@@ -28,6 +27,7 @@ public class StartPage extends Panels implements ActionListener{
     
     public ArrayList<String> stringDetails = new ArrayList<>();
     
+    Simulator simulator;
     
     public StartPage(){
     
@@ -140,7 +140,7 @@ public class StartPage extends Panels implements ActionListener{
         selectionPanel.add(buttonPanel);
         
         errorLabel = createLabel(1000, 20, white, "", 20);
-        errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        errorLabel.setHorizontalAlignment(center);
         
         add(titlePanel);
         add(selectionPanel);
@@ -237,7 +237,7 @@ public class StartPage extends Panels implements ActionListener{
         return true;
     }
     
-    private boolean validateInput(){
+    public boolean validateInput(){
         String algorithm = algorithmField.getText();
         String frames = framesField.getText();
         String length = lengthField.getText();
@@ -262,34 +262,64 @@ public class StartPage extends Panels implements ActionListener{
         if(e.getSource()==fifoButton){
             errorLabel.setText("");
             algorithmField.setText(fifoButton.getText());
+            /*simulator.setAlgorithm(algorithmField.getText());
+            simulator.setNumberOfFrames(framesField.getText());
+            simulator.setReferenceLength(lengthField.getText());*/
         }
         else if(e.getSource()==lruButton){
             errorLabel.setText("");
             algorithmField.setText(lruButton.getText());
+            /*simulator.setAlgorithm(algorithmField.getText());
+            simulator.setNumberOfFrames(framesField.getText());
+            simulator.setReferenceLength(lengthField.getText());*/
+            
         }
         else if(e.getSource()==optButton){
             errorLabel.setText("");
             algorithmField.setText(optButton.getText());
+            /*simulator.setAlgorithm(algorithmField.getText());
+            simulator.setNumberOfFrames(framesField.getText());
+            simulator.setReferenceLength(lengthField.getText());*/
+
         }
         else if(e.getSource()==scButton){
             errorLabel.setText("");
             algorithmField.setText("Second Chance");
+            /*simulator.setAlgorithm(algorithmField.getText());
+            simulator.setNumberOfFrames(framesField.getText());
+            simulator.setReferenceLength(lengthField.getText());*/
+
         }
         else if(e.getSource()==escButton){
             errorLabel.setText("");
             algorithmField.setText("Enhanced Second Chance");
+            /*simulator.setAlgorithm(algorithmField.getText());
+            simulator.setNumberOfFrames(framesField.getText());
+            simulator.setReferenceLength(lengthField.getText());*/
+ 
         }
         else if(e.getSource()==lfuButton){
             errorLabel.setText("");
             algorithmField.setText(lfuButton.getText());
+            /*simulator.setAlgorithm(algorithmField.getText());
+            simulator.setNumberOfFrames(framesField.getText());
+            simulator.setReferenceLength(lengthField.getText());*/
         }
         else if(e.getSource()==mfuButton){
             errorLabel.setText("");
             algorithmField.setText(mfuButton.getText());
+            /*simulator.setAlgorithm(algorithmField.getText());
+            simulator.setNumberOfFrames(framesField.getText());
+            simulator.setReferenceLength(lengthField.getText());*/
+
         }
         else if(e.getSource()==allButton){
             errorLabel.setText("");
             algorithmField.setText(allButton.getText());
+            /*simulator.setAlgorithm(algorithmField.getText());
+            simulator.setNumberOfFrames(framesField.getText());
+            simulator.setReferenceLength(lengthField.getText());*/
+
         }
         else if(e.getSource()==randomButton){
             errorLabel.setText("");

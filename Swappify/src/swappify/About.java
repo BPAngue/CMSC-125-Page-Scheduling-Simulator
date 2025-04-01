@@ -23,7 +23,7 @@ public class About extends Panels {
         header.setPreferredSize(new Dimension(1000, 250));
         header.setOpaque(false);
         
-        backButton = createButton(150, 40, "BACK", gray, white, 20);
+        backButton = createButton(150, 40, "BACK", gray, white, 20, null);
         
         titleLabel = createLabel(800, 100, white, "About", 60f);
         logoLabel = new JLabel();

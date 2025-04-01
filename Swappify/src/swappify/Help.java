@@ -5,7 +5,6 @@ import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 public class Help extends Panels{
     
@@ -38,7 +37,7 @@ public class Help extends Panels{
         footer.setPreferredSize(new Dimension(1000, 100));
         footer.setOpaque(false);
         
-        backButton = createButton(150, 40, "BACK", gray, white, 20);
+        backButton = createButton(150, 40, "BACK", gray, white, 20, null);
         footer.add(backButton);
         
         add(header);

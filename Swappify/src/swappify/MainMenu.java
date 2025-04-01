@@ -32,9 +32,12 @@ public class MainMenu extends JPanel implements ActionListener{
     public Icon logoIcon;
     public Font archivoblack;
     
+    Simulator simulator = new Simulator();
+    
     StartPage startPanel = new StartPage();
     Help helpPanel = new Help();
     About aboutPanel = new About();
+    PageSimulator simulatorPanel = new PageSimulator();
     
     public MainMenu (CardLayout cardLayout, JPanel cardPanel){
         this.cardLayout = cardLayout;
@@ -102,10 +105,13 @@ public class MainMenu extends JPanel implements ActionListener{
         cardPanel.add(startPanel, "START");
         cardPanel.add(helpPanel, "HELP");
         cardPanel.add(aboutPanel, "ABOUT");
+        cardPanel.add(simulatorPanel, "SIMULATOR");
         
         startPanel.backButton.addActionListener(this);
+        startPanel.generateButton.addActionListener(this);
         helpPanel.backButton.addActionListener(this);
         aboutPanel.backButton.addActionListener(this);
+        simulatorPanel.backButton.addActionListener(this);
     }
     
     public JButton createButton(String text) {
@@ -157,7 +163,7 @@ public class MainMenu extends JPanel implements ActionListener{
         if (e.getSource()==exitButton){
             System.exit(0);
         }
-        else if (e.getSource()==startButton){
+        else if (e.getSource()==startButton || e.getSource()==simulatorPanel.backButton){
             cardLayout.show(cardPanel, "START");
         }
         else if (e.getSource()==startPanel.backButton || e.getSource()==helpPanel.backButton
@@ -169,6 +175,9 @@ public class MainMenu extends JPanel implements ActionListener{
         }
         else if (e.getSource()==aboutButton){
             cardLayout.show(cardPanel, "ABOUT");
+        }
+        else if (e.getSource()==startPanel.generateButton && startPanel.validateInput()){
+            cardLayout.show(cardPanel, "SIMULATOR");
         }
     }
 }
