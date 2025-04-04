@@ -1,0 +1,167 @@
+package swappify;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import javax.swing.JLabel;
+import javax.swing.Timer;
+
+public class LFU {
+    
+    public ArrayList<Integer> pageFrames;
+    public ArrayList<Integer> pageNumberLabel;
+    public ArrayList<String> hitMissLabel;
+    public ArrayList<ArrayList<Integer>> pageFramesPerColumn;
+    public Map<Integer, Integer> pageFrequency = new HashMap<>();
+    public LinkedHashSet<Integer> insertionOrder = new LinkedHashSet<>();
+    public ArrayList<Integer> referenceStringValues;
+    public String referenceString;
+    public Timer timer;
+    public int time;
+    public int pageFaults;
+    public int numFrames = 0;
+    public Draw draw;
+    public JLabel timerLabel;
+    public int seconds = 1;
+    public int minutes = 0;
+    
+    public LFU(ArrayList<Integer> referenceStringValues, ArrayList<Integer> pageFrames, ArrayList<Integer> pageNumberLabel, ArrayList<String> hitMissLabel, int numFrames, int pageFaults, Draw draw, ArrayList<ArrayList<Integer>> pageFramesPerColumn, JLabel timerLabel) {
+        this.referenceStringValues = referenceStringValues;
+        this.pageFrames = pageFrames;
+        this.pageNumberLabel = pageNumberLabel;
+        this.hitMissLabel = hitMissLabel;
+        this.numFrames = numFrames;
+        this.pageFaults = pageFaults;
+        this.draw = draw;
+        this.pageFramesPerColumn = pageFramesPerColumn;
+        this.timerLabel = timerLabel;
+    }
+    
+    public void startSimulation() {
+        timer = new Timer(1000, new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (time < referenceStringValues.size()) {
+                    if (seconds == 60) {
+                        seconds = 0;
+                        minutes++;
+                    }
+                    String timeValue = String.format("%02d:%02d", minutes, seconds);
+                    timerLabel.setText("Timer: " + timeValue);
+                    
+                    int page = referenceStringValues.get(time);
+                    pageNumberLabel.add(page);
+                    
+                    // for debugging
+                    System.out.println("Time " + time + ": Processing page " + page); 
+                    System.out.println("Page Frequencies: " + pageFrequency);
+                    System.out.println("Page Insertion Order: " + insertionOrder);
+                    
+                    // check if the page is already in the frame
+                    if (!pageFrames.contains(page)) {
+                        pageFaults++;
+                        System.out.println("Page fault! Page " + page + " not in frames."); // for debugging
+                        
+                        // if frames are full, remove the least frequently used page but replace it in the same position
+                        if (pageFrames.size() == numFrames) {
+                            int pageToRemove = findLFUPage();
+                            int indexToReplace = pageFrames.indexOf(pageToRemove);
+                            pageFrames.set(indexToReplace, page);
+                            insertionOrder.remove(pageToRemove);
+                            insertionOrder.add(page);
+                            pageFrequency.remove(pageToRemove);
+                            recordSnapShot();
+                            System.out.println("Removed page: " + pageToRemove); // for debugging
+                        } else {
+                            // Add page normally if there's still space
+                            pageFrames.add(page);
+                            insertionOrder.add(page);
+                            recordSnapShot();
+			}
+                        hitMissLabel.add("Miss");
+                        draw.totalPageFault = pageFaults;
+                    } else {
+                        System.out.println("Page hit! Page " + page + " already in frames."); // for debugging
+                        hitMissLabel.add("Hit");
+                        recordSnapShot();
+                        draw.totalPageFault = pageFaults;
+                    }
+                    
+                    pageFrequency.put(page, pageFrequency.getOrDefault(page, 0) + 1);
+                    // display current state of the page frames
+                    printPageFrames();		
+                    time++;
+                    seconds++;
+                } else {
+                    timer.stop();
+                    draw.nextStep();
+                    draw.totalPageFault = pageFaults;
+                    
+                    // for debugging
+                    System.out.println("\nSimulation Complete!");
+                    System.out.println("Total Page Faults: " + pageFaults);
+                }
+            }
+        });
+        timer.start();
+    }
+    
+    public void printPageFrames() {
+        draw.repaint();
+        draw.nextStep();
+        
+        // for debugging
+	System.out.print("Current Frames: ");
+	for (int frame : pageFrames) {
+            System.out.print(frame + " ");
+        }
+	System.out.println();
+	System.out.println();
+    }
+    
+    public void recordSnapShot() {
+        ArrayList<Integer> snapshot = new ArrayList<>();
+        for (int i = 0; i < numFrames; i++) {
+            if (i < pageFrames.size()) {
+                snapshot.add(pageFrames.get(i));
+            } else {
+                snapshot.add(null); // Fill empty slots with nulls
+            }
+        }
+        pageFramesPerColumn.add(snapshot);
+        
+        // for debugging
+        System.out.println("Snapshot: " + pageFramesPerColumn);
+    }
+    
+    public int findLFUPage() {
+        int minFreq = Integer.MAX_VALUE;
+        List<Integer> candidates = new ArrayList<>();
+        
+        // Step 1: Find all pages with the lowest frequency
+        for (int page : pageFrames) {
+            int freq = pageFrequency.getOrDefault(page, 0);
+            if (freq < minFreq) {
+                minFreq = freq;
+                candidates.clear();
+                candidates.add(page);
+            } else if (freq == minFreq) {
+                candidates.add(page);
+            }
+        }
+        
+        // Step 2: Use FIFO (insertion order) to break ties
+        for (int page : insertionOrder) {
+            if (candidates.contains(page)) {
+                return page;
+            }
+        }
+        
+        // fallback
+        return candidates.get(0);
+    }
+}
