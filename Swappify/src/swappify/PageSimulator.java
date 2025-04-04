@@ -23,7 +23,8 @@ import javax.swing.JTextField;
 public class PageSimulator extends Panels implements ActionListener{
     
     
-    private JPanel header, leftPanel, centerPanel, rightPanel, timerPanel, framePanel, footer, speedPanel, infoPanel, simulatorPanel, pageRefPanel, numPageFramePanel;
+    private JPanel header, leftPanel, centerPanel, rightPanel, timerPanel, footer, speedPanel, infoPanel, simulatorPanel, pageRefPanel, numPageFramePanel;
+    public JPanel framePanel;
     private JLabel logoLabel, titleLabel, timerLabel, pageRefValues, pageRefValuesTitle, numPageFrameValue;
     private JButton pdfButton, imgButton, restartButton, plusButton, minusButton;
     public JButton backButton;
@@ -45,19 +46,19 @@ public class PageSimulator extends Panels implements ActionListener{
         setLayout(new FlowLayout(FlowLayout.CENTER, 0,0));
         
         header = new JPanel(new FlowLayout(FlowLayout.CENTER, 0,25));
-        header.setPreferredSize(new Dimension (1000, 200));
+        header.setPreferredSize(new Dimension (1480, 200));
         header.setOpaque(false);
         
         logoLabel = new JLabel();
         logoLabel.setIcon(smallLogoIcon);
         
         leftPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0,10));
-        leftPanel.setPreferredSize(new Dimension(330, 200));
+        leftPanel.setPreferredSize(new Dimension(493, 200));
         leftPanel.setOpaque(false);
         leftPanel.add(logoLabel);
         
         centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20,10));
-        centerPanel.setPreferredSize(new Dimension(330, 200));
+        centerPanel.setPreferredSize(new Dimension(493, 200));
         centerPanel.setOpaque(false);
         
         titleLabel = createLabel(330, 80, white, "" + " " + simulator.getAlgorithm(), 20);
@@ -72,14 +73,14 @@ public class PageSimulator extends Panels implements ActionListener{
         centerPanel.add(pdfButton);
         centerPanel.add(imgButton);
         
-        rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 45,50));
-        rightPanel.setPreferredSize(new Dimension(330, 200));
+        rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0,50));
+        rightPanel.setPreferredSize(new Dimension(493, 200));
         rightPanel.setOpaque(false);
         
-        backButton = createButton(150, 40, "BACK", gray, white,20, null);
+        backButton = createButton(200, 40, "BACK", gray, white,20, null);
         
         timerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        timerPanel.setPreferredSize(new Dimension(150, 40));
+        timerPanel.setPreferredSize(new Dimension(300, 40));
         timerPanel.setBorder(BorderFactory.createLineBorder(white, 1));
         timerPanel.setBackground(darkgreen);
         
@@ -92,7 +93,7 @@ public class PageSimulator extends Panels implements ActionListener{
         
         // main simulator panel
         framePanel = new JPanel();
-        framePanel.setPreferredSize(new Dimension(900, 470));
+        framePanel.setPreferredSize(new Dimension(1480, 470));
         framePanel.setBackground(green);
         framePanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(white, 1), 
@@ -136,13 +137,13 @@ public class PageSimulator extends Panels implements ActionListener{
         infoPanel.add(numPageFramePanel);
         
         infoPanelHeight = pageRefPanel.getPreferredSize().height + numPageFramePanel.getPreferredSize().height;
-        infoPanel.setPreferredSize(new Dimension(860, infoPanelHeight));
-        pageRefPanel.setPreferredSize(new Dimension(430, infoPanelHeight));
-        numPageFramePanel.setPreferredSize(new Dimension(430, infoPanelHeight));
+        infoPanel.setPreferredSize(new Dimension(1460, infoPanelHeight));
+        pageRefPanel.setPreferredSize(new Dimension(730, infoPanelHeight));
+        numPageFramePanel.setPreferredSize(new Dimension(730, infoPanelHeight));
         
         // change this with the drawing panel
         draw = new Draw(simulator.getPages(), pageFramesPerColumn, hitMissLabel, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFault);
-        draw.setPreferredSize(new Dimension(860, 420 - infoPanelHeight));
+        draw.setPreferredSize(new Dimension(1460, 420 - infoPanelHeight));
         draw.setBackground(Color.yellow);
         
         framePanel.add(infoPanel);
@@ -192,9 +193,9 @@ public class PageSimulator extends Panels implements ActionListener{
 
     private File saveAsPNG(String fileName) throws IOException {
         // Capture the content of framePanel as an image
-        BufferedImage image = new BufferedImage(framePanel.getWidth(), framePanel.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage image = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = image.createGraphics();
-        framePanel.printAll(g2d);
+        this.printAll(g2d);
         g2d.dispose();
     
         // Save the image as a PNG file

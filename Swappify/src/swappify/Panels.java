@@ -150,6 +150,6 @@ public class Panels extends JPanel{
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         img = getImg("/img/bg.jpg");
-        g.drawImage(img, 0, 0, 1000, 800, null); 
+        g.drawImage(img, 0, 0, 1550, 800, null); 
     }
 }

@@ -43,11 +43,11 @@ public class StartPage extends Panels implements ActionListener{
         /// title panel ////
         
         titlePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 110,0));
-        titlePanel.setPreferredSize(new Dimension(1000, 100));
+        titlePanel.setPreferredSize(new Dimension(1500, 100));
         titlePanel.setOpaque(false);
         
         titleLabel = new JLabel();
-        titleLabel.setPreferredSize(new Dimension(300, 100));
+        titleLabel.setPreferredSize(new Dimension(500, 100));
         titleLabel.setIcon(smallLogoIcon);
         backButton = createButton(150, 40, "BACK", gray, white,20, this);
         
