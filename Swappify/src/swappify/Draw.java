@@ -14,7 +14,9 @@ public class Draw extends JPanel {
     public int numberOfPageFrames = 0;
     public int totalPageFault = 0;
     private int currentColumn = -1;
-
+    private int horizontalSpacing = 20;
+    public int speed = 1000;
+    
     public Draw(ArrayList<Integer> pageNumberLabel, ArrayList<ArrayList<Integer>> pageFramesPerColumn, ArrayList<String> hitMissLabel, int referenceStringLength, int numberOfPageFrames, int totalPageFault) {
         this.pageNumberLabel = pageNumberLabel;
         this.pageFramesPerColumn = pageFramesPerColumn;
@@ -47,9 +49,16 @@ public class Draw extends JPanel {
 
         int horizontalMargin = 20;
         int verticalMargin = 10 + topLabelsHeight;
-        int horizontalSpacing = 20;
+        
+        if (referenceStringLength < 15) {
+            horizontalSpacing = 55;
+        } else if (referenceStringLength < 19) {
+            horizontalSpacing = 30;
+        } else if (referenceStringLength > 29) {
+            horizontalSpacing = 5;
+        }
 
-        int availableWidth = panelWidth - (2 * horizontalMargin);
+        int availableWidth = panelWidth - (5 * horizontalMargin);
         int boxWidth = Math.min(50, (availableWidth - ((referenceStringLength - 1) * horizontalSpacing)) / referenceStringLength);
         int availableHeight = panelHeight - (2 * verticalMargin) - bottomLabelsHeight;
         int boxHeight = availableHeight / numberOfPageFrames;

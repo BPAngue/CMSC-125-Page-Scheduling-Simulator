@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 
@@ -20,6 +21,7 @@ public class LFU {
     public LinkedHashSet<Integer> insertionOrder = new LinkedHashSet<>();
     public ArrayList<Integer> referenceStringValues;
     public String referenceString;
+    public JButton pdfButton, imgButton, restartButton, plusButton, minusButton;
     public Timer timer;
     public int time;
     public int pageFaults;
@@ -29,7 +31,10 @@ public class LFU {
     public int seconds = 1;
     public int minutes = 0;
     
-    public LFU(ArrayList<Integer> referenceStringValues, ArrayList<Integer> pageFrames, ArrayList<Integer> pageNumberLabel, ArrayList<String> hitMissLabel, int numFrames, int pageFaults, Draw draw, ArrayList<ArrayList<Integer>> pageFramesPerColumn, JLabel timerLabel) {
+    public LFU(ArrayList<Integer> referenceStringValues, ArrayList<Integer> pageFrames,
+            ArrayList<Integer> pageNumberLabel, ArrayList<String> hitMissLabel, 
+            int numFrames, int pageFaults, Draw draw, ArrayList<ArrayList<Integer>> pageFramesPerColumn, 
+            JLabel timerLabel, JButton pdfButton, JButton imgButton, JButton restartButton, JButton plusButton, JButton minusButton) {
         this.referenceStringValues = referenceStringValues;
         this.pageFrames = pageFrames;
         this.pageNumberLabel = pageNumberLabel;
@@ -39,10 +44,15 @@ public class LFU {
         this.draw = draw;
         this.pageFramesPerColumn = pageFramesPerColumn;
         this.timerLabel = timerLabel;
+        this.pdfButton = pdfButton;
+        this.imgButton = imgButton;
+        this.restartButton = restartButton;
+        this.plusButton = plusButton;
+        this.minusButton = minusButton;
     }
     
-    public void startSimulation() {
-        timer = new Timer(1000, new ActionListener(){
+    public void startSimulation(int simulationSpeed) {
+        timer = new Timer(simulationSpeed, new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (time < referenceStringValues.size()) {

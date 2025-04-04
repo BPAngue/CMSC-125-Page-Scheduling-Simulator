@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 
@@ -17,6 +18,7 @@ public class Optimal {
     public Set<Integer> pageSet = new HashSet<>();
     public ArrayList<Integer> referenceStringValues;
     public String referenceString;
+    public JButton pdfButton, imgButton, restartButton, plusButton, minusButton;
     public Timer timer;
     public int time;
     public int pageFaults;
@@ -26,7 +28,10 @@ public class Optimal {
     public int seconds = 1;
     public int minutes = 0;
     
-    public Optimal(ArrayList<Integer> referenceStringValues, ArrayList<Integer> pageFrames, ArrayList<Integer> pageNumberLabel, ArrayList<String> hitMissLabel, int numFrames, int pageFaults, Draw draw, ArrayList<ArrayList<Integer>> pageFramesPerColumn, JLabel timerLabel) {
+    public Optimal(ArrayList<Integer> referenceStringValues, ArrayList<Integer> pageFrames, 
+            ArrayList<Integer> pageNumberLabel, ArrayList<String> hitMissLabel, 
+            int numFrames, int pageFaults, Draw draw, ArrayList<ArrayList<Integer>> pageFramesPerColumn, 
+            JLabel timerLabel, JButton pdfButton, JButton imgButton, JButton restartButton, JButton plusButton, JButton minusButton) {
         this.referenceStringValues = referenceStringValues;
         this.pageFrames = pageFrames;
         this.pageNumberLabel = pageNumberLabel;
@@ -36,10 +41,15 @@ public class Optimal {
         this.draw = draw;
         this.pageFramesPerColumn = pageFramesPerColumn;
         this.timerLabel = timerLabel;
+        this.pdfButton = pdfButton;
+        this.imgButton = imgButton;
+        this.restartButton = restartButton;
+        this.plusButton = plusButton;
+        this.minusButton = minusButton;
     }
     
-    public void startSimulation() {
-        timer = new Timer(1000, new ActionListener(){
+    public void startSimulation(int simulationSpeed) {
+        timer = new Timer(simulationSpeed, new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (time < referenceStringValues.size()) {

@@ -16,7 +16,6 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -154,7 +153,7 @@ public class MainMenu extends JPanel implements ActionListener{
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         bg = getImg("/img/bg.jpg");
-        g.drawImage(bg, 0, 0, 1000, 800, null);
+        g.drawImage(bg, 0, 0, 1550, 800, null);
     }
 
     @Override

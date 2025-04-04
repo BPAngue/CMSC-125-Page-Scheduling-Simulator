@@ -43,11 +43,11 @@ public class StartPage extends Panels implements ActionListener{
         /// title panel ////
         
         titlePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 110,0));
-        titlePanel.setPreferredSize(new Dimension(1000, 100));
+        titlePanel.setPreferredSize(new Dimension(1500, 100));
         titlePanel.setOpaque(false);
         
         titleLabel = new JLabel();
-        titleLabel.setPreferredSize(new Dimension(300, 100));
+        titleLabel.setPreferredSize(new Dimension(500, 100));
         titleLabel.setIcon(smallLogoIcon);
         backButton = createButton(150, 40, "BACK", gray, white,20, this);
         
@@ -211,11 +211,13 @@ public class StartPage extends Panels implements ActionListener{
     }
      
     private void generateTextInput(){
-        readFile(uploadFile());
+        if (uploadFile() != null) {
+            readFile(uploadFile());
 
-        framesField.setText(stringDetails.get(0));
-        lengthField.setText(stringDetails.get(1));
-        rstringField.setText(stringDetails.get(2));
+            framesField.setText(stringDetails.get(0));
+            lengthField.setText(stringDetails.get(1));
+            rstringField.setText(stringDetails.get(2));
+        }
     }
     
     public boolean isNumeric(String string) {
@@ -303,7 +305,6 @@ public class StartPage extends Panels implements ActionListener{
         }
         else if(e.getSource()==generateButton && !validateInput()){
             errorLabel.setText("Invalid. Please check your inputs.");
-            System.out.println(validateInput());
         }
         else if(e.getSource()==resetButton || e.getSource()==backButton){
             clearInputs();

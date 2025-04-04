@@ -25,7 +25,7 @@ public class PageSimulator extends Panels implements ActionListener{
     
     private JPanel header, leftPanel, centerPanel, rightPanel, timerPanel, framePanel, footer, speedPanel, infoPanel, simulatorPanel, pageRefPanel, numPageFramePanel;
     private JLabel logoLabel, titleLabel, timerLabel, pageRefValues, pageRefValuesTitle, numPageFrameValue;
-    private JButton pdfButton, imgButton, restartButton, plusButton, minusButton;
+    public JButton pdfButton, imgButton, restartButton, plusButton, minusButton;
     public JButton backButton;
     private JTextField speedTextField;
     private Simulator simulator;
@@ -45,19 +45,19 @@ public class PageSimulator extends Panels implements ActionListener{
         setLayout(new FlowLayout(FlowLayout.CENTER, 0,0));
         
         header = new JPanel(new FlowLayout(FlowLayout.CENTER, 0,25));
-        header.setPreferredSize(new Dimension (1000, 200));
+        header.setPreferredSize(new Dimension (1480, 200));
         header.setOpaque(false);
         
         logoLabel = new JLabel();
         logoLabel.setIcon(smallLogoIcon);
         
         leftPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0,10));
-        leftPanel.setPreferredSize(new Dimension(330, 200));
+        leftPanel.setPreferredSize(new Dimension(493, 200));
         leftPanel.setOpaque(false);
         leftPanel.add(logoLabel);
         
         centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20,10));
-        centerPanel.setPreferredSize(new Dimension(330, 200));
+        centerPanel.setPreferredSize(new Dimension(493, 200));
         centerPanel.setOpaque(false);
         
         titleLabel = createLabel(330, 80, white, "" + " " + simulator.getAlgorithm(), 20);
@@ -72,14 +72,14 @@ public class PageSimulator extends Panels implements ActionListener{
         centerPanel.add(pdfButton);
         centerPanel.add(imgButton);
         
-        rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 45,50));
-        rightPanel.setPreferredSize(new Dimension(330, 200));
+        rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0,50));
+        rightPanel.setPreferredSize(new Dimension(493, 200));
         rightPanel.setOpaque(false);
         
-        backButton = createButton(150, 40, "BACK", gray, white,20, null);
+        backButton = createButton(200, 40, "BACK", gray, white,20, null);
         
         timerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        timerPanel.setPreferredSize(new Dimension(150, 40));
+        timerPanel.setPreferredSize(new Dimension(300, 40));
         timerPanel.setBorder(BorderFactory.createLineBorder(white, 1));
         timerPanel.setBackground(darkgreen);
         
@@ -92,7 +92,7 @@ public class PageSimulator extends Panels implements ActionListener{
         
         // main simulator panel
         framePanel = new JPanel();
-        framePanel.setPreferredSize(new Dimension(900, 470));
+        framePanel.setPreferredSize(new Dimension(1480, 470));
         framePanel.setBackground(green);
         framePanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(white, 1), 
@@ -136,14 +136,14 @@ public class PageSimulator extends Panels implements ActionListener{
         infoPanel.add(numPageFramePanel);
         
         infoPanelHeight = pageRefPanel.getPreferredSize().height + numPageFramePanel.getPreferredSize().height;
-        infoPanel.setPreferredSize(new Dimension(860, infoPanelHeight));
-        pageRefPanel.setPreferredSize(new Dimension(430, infoPanelHeight));
-        numPageFramePanel.setPreferredSize(new Dimension(430, infoPanelHeight));
+        infoPanel.setPreferredSize(new Dimension(1460, infoPanelHeight));
+        pageRefPanel.setPreferredSize(new Dimension(730, infoPanelHeight));
+        numPageFramePanel.setPreferredSize(new Dimension(730, infoPanelHeight));
         
         // change this with the drawing panel
         draw = new Draw(simulator.getPages(), pageFramesPerColumn, hitMissLabel, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFault);
-        draw.setPreferredSize(new Dimension(860, 420 - infoPanelHeight));
-        draw.setBackground(Color.yellow);
+        draw.setPreferredSize(new Dimension(1460, 420 - infoPanelHeight));
+        draw.setBackground(Color.white);
         
         framePanel.add(infoPanel);
         framePanel.add(draw);
@@ -182,26 +182,53 @@ public class PageSimulator extends Panels implements ActionListener{
     }
     
     public void startSimulation(String algorithm) {
+        // disable buttons
+        pdfButton.setEnabled(false);
+        imgButton.setEnabled(false);
+        restartButton.setEnabled(false);
+        plusButton.setEnabled(false);
+        minusButton.setEnabled(false);
+        
+        int simulationSpeed = draw.speed;
+        speedTextField.setText(String.valueOf(simulationSpeed));
+        
+        // for debugging
+        System.out.println(simulationSpeed);
         switch(algorithm) {
             case "FIFO":
-                currentSimulator = new FIFO(simulator.getPages(), pageFrames, pageNumberLabel, hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, pageFramesPerColumn, timerLabel);
-                ((FIFO) currentSimulator).startSimulation();
+                currentSimulator = new FIFO(simulator.getPages(), pageFrames, pageNumberLabel, 
+                        hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, 
+                        pageFramesPerColumn, timerLabel, pdfButton, imgButton, restartButton, 
+                        plusButton, minusButton);
+                ((FIFO) currentSimulator).startSimulation(simulationSpeed);
                 break;
             case "LRU":
-                currentSimulator = new LRU(simulator.getPages(), pageFrames, pageNumberLabel, hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, pageFramesPerColumn, timerLabel);
-                ((LRU) currentSimulator).startSimulation();
+                currentSimulator = new LRU(simulator.getPages(), pageFrames, pageNumberLabel, 
+                        hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, 
+                        pageFramesPerColumn, timerLabel, pdfButton, imgButton, restartButton, 
+                        plusButton, minusButton);
+                ((LRU) currentSimulator).startSimulation(simulationSpeed);
                 break;
             case "OPT":
-                currentSimulator = new Optimal(simulator.getPages(), pageFrames, pageNumberLabel, hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, pageFramesPerColumn, timerLabel);
-                ((Optimal) currentSimulator).startSimulation();
+                currentSimulator = new Optimal(simulator.getPages(), pageFrames, pageNumberLabel, 
+                        hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, 
+                        pageFramesPerColumn, timerLabel, pdfButton, imgButton, restartButton, 
+                        plusButton, minusButton);
+                ((Optimal) currentSimulator).startSimulation(simulationSpeed);
                 break;
             case "LFU":
-                currentSimulator = new LFU(simulator.getPages(), pageFrames, pageNumberLabel, hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, pageFramesPerColumn, timerLabel);
-                ((LFU) currentSimulator).startSimulation();
+                currentSimulator = new LFU(simulator.getPages(), pageFrames, pageNumberLabel, 
+                        hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, 
+                        pageFramesPerColumn, timerLabel, pdfButton, imgButton, restartButton, 
+                        plusButton, minusButton);
+                ((LFU) currentSimulator).startSimulation(simulationSpeed);
                 break;
             case "MFU":
-                currentSimulator = new MFU(simulator.getPages(), pageFrames, pageNumberLabel, hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, pageFramesPerColumn, timerLabel);
-                ((MFU) currentSimulator).startSimulation();
+                currentSimulator = new MFU(simulator.getPages(), pageFrames, pageNumberLabel, 
+                        hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, 
+                        pageFramesPerColumn, timerLabel, pdfButton, imgButton, restartButton, 
+                        plusButton, minusButton);
+                ((MFU) currentSimulator).startSimulation(simulationSpeed);
                 break;
         }
     }
