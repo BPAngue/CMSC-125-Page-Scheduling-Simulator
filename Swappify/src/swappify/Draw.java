@@ -6,7 +6,6 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import javax.swing.JPanel;
 
-
 public class Draw extends JPanel {
     private ArrayList<Integer> pageNumberLabel;
     private ArrayList<ArrayList<Integer>> pageFramesPerColumn;
@@ -16,9 +15,7 @@ public class Draw extends JPanel {
     public int totalPageFault = 0;
     private int currentColumn = -1;
 
-    public Draw(ArrayList<Integer> pageNumberLabel, ArrayList<ArrayList<Integer>> pageFramesPerColumn,
-                ArrayList<String> hitMissLabel, int referenceStringLength,
-                int numberOfPageFrames, int totalPageFault) {
+    public Draw(ArrayList<Integer> pageNumberLabel, ArrayList<ArrayList<Integer>> pageFramesPerColumn, ArrayList<String> hitMissLabel, int referenceStringLength, int numberOfPageFrames, int totalPageFault) {
         this.pageNumberLabel = pageNumberLabel;
         this.pageFramesPerColumn = pageFramesPerColumn;
         this.hitMissLabel = hitMissLabel;
@@ -37,8 +34,10 @@ public class Draw extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
-        if (referenceStringLength <= 0 || numberOfPageFrames <= 0) return;
+        
+        if (referenceStringLength <= 0 || numberOfPageFrames <= 0) {
+            return;
+        }
 
         int panelWidth = getWidth();
         int panelHeight = getHeight();

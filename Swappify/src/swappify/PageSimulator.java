@@ -44,15 +44,6 @@ public class PageSimulator extends Panels implements ActionListener{
         
         setLayout(new FlowLayout(FlowLayout.CENTER, 0,0));
         
-        // for debugging
-            ArrayList<Integer> number = simulator.getPages();
-            for (int page : number) {
-                System.out.println(page);
-            }
-            System.out.println(simulator.getAlgorithm());
-            System.out.println(simulator.getNumberOfFrames());
-            System.out.println(simulator.getReferenceLength());
-        
         header = new JPanel(new FlowLayout(FlowLayout.CENTER, 0,25));
         header.setPreferredSize(new Dimension (1000, 200));
         header.setOpaque(false);
@@ -110,7 +101,7 @@ public class PageSimulator extends Panels implements ActionListener{
         
         infoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         infoPanel.setBackground(Color.white);
-        int infoPanelHeight = 100;
+        int infoPanelHeight;
         
         pageRefPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         pageRefPanel.setBackground(Color.white);
@@ -193,7 +184,7 @@ public class PageSimulator extends Panels implements ActionListener{
     public void startSimulation(String algorithm) {
         switch(algorithm) {
             case "FIFO":
-                currentSimulator = new FIFO(simulator.getPages(), pageFrames, pageNumberLabel, hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, pageFramesPerColumn);
+                currentSimulator = new FIFO(simulator.getPages(), pageFrames, pageNumberLabel, hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, pageFramesPerColumn, timerLabel);
                 ((FIFO) currentSimulator).startSimulation();
                 break;
         }
@@ -213,7 +204,6 @@ public class PageSimulator extends Panels implements ActionListener{
         
         return pngFile;
     }
-
 
     @Override
     public void actionPerformed(ActionEvent e) {
