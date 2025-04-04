@@ -20,27 +20,30 @@ import javax.swing.JTextField;
 public class StartPage extends Panels implements ActionListener{
     
     private JPanel titlePanel, selectionPanel, algorithmPanel,outlinePanel, buttonPanel;
-    private JLabel titleLabel, selectLabel, outlineLabel, algorithmLabel, framesLabel, lengthLabel, rstringLabel; 
+    private JLabel titleLabel, selectLabel, outlineLabel, algorithmLabel, framesLabel, lengthLabel, rstringLabel, errorLabel; 
     public JTextField algorithmField, framesField, lengthField, rstringField;
     public JButton backButton, fifoButton, lruButton, optButton, scButton, escButton, lfuButton, mfuButton, allButton, 
             generateButton, resetButton, randomButton, textButton;
     
     public ArrayList<String> stringDetails = new ArrayList<>();
     
+    // for storing inputs to simulator class
+    public String[] tokens;
+    Simulator simulator;
     
-    public StartPage(){
-    
+    public StartPage(Simulator simulator){
+        this.simulator = simulator;
     }
     
     @Override
     public void showComponents(){
         
-        setLayout(new FlowLayout(FlowLayout.CENTER, 0, 20));
+        setLayout(new FlowLayout(FlowLayout.CENTER, 0, 15));
         
         /// title panel ////
         
         titlePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 110,0));
-        titlePanel.setPreferredSize(new Dimension(1000, 110));
+        titlePanel.setPreferredSize(new Dimension(1000, 100));
         titlePanel.setOpaque(false);
         
         titleLabel = new JLabel();
@@ -54,7 +57,7 @@ public class StartPage extends Panels implements ActionListener{
         /// selection panel ///
         
         selectionPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0,5));
-        selectionPanel.setPreferredSize(new Dimension (900, 570));
+        selectionPanel.setPreferredSize(new Dimension (900, 580));
         selectionPanel.setBackground(green);
         selectionPanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(white, 1), 
@@ -138,15 +141,26 @@ public class StartPage extends Panels implements ActionListener{
         selectionPanel.add(outlinePanel);
         selectionPanel.add(buttonPanel);
         
+        errorLabel = createLabel(1000, 20, white, "", 20);
+        errorLabel.setHorizontalAlignment(center);
+        
         add(titlePanel);
         add(selectionPanel);
+        add(errorLabel);
     }
 
-    private void clearInputs(){
+    public void clearInputs(){
         algorithmField.setText("");
         framesField.setText("");
         lengthField.setText("");
         rstringField.setText("");
+        errorLabel.setText("");
+        
+        // clear inputs in Simulator class
+        simulator.clearAlgorithm();
+        simulator.clearNumberOfFrames();
+        simulator.clearReferenceLength();
+        simulator.clearReferenceString();
     }
     
     private void generateRandomInput(){
@@ -181,7 +195,6 @@ public class StartPage extends Panels implements ActionListener{
     }
     
      private void readFile(File file) {
-         
         if (file == null) {
             System.out.println("No file to read.");
             return;
@@ -199,48 +212,98 @@ public class StartPage extends Panels implements ActionListener{
      
     private void generateTextInput(){
         readFile(uploadFile());
-        
-        /* for debugging 
-        for(String i : stringDetails){
-            System.out.println(i);
-        } */
-        
+
         framesField.setText(stringDetails.get(0));
         lengthField.setText(stringDetails.get(1));
         rstringField.setText(stringDetails.get(2));
     }
     
+    public boolean isNumeric(String string) {
+            try {
+                Double.valueOf(string);
+                return true;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+    }
+    
+    private boolean validRefString(){
+        String rstring = rstringField.getText();
+        int length = rstring.length();
+        
+        for (int i=0; i<length; i++){
+            if(!(Character.isDigit(rstring.charAt(i)) || Character.isSpaceChar(rstring.charAt(i)))){
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public boolean validateInput(){
+        String algorithm = algorithmField.getText();
+        String frames = framesField.getText();
+        String length = lengthField.getText();
+        String rstring = rstringField.getText();
+        
+        if (((!algorithm.isEmpty() || !algorithm.isBlank())  && (!frames.isEmpty() || !frames.isBlank())
+                && (!length.isEmpty() || !length.isBlank()) && (!rstring.isEmpty() || !rstring.isBlank()) 
+                && isNumeric(frames) && isNumeric(length)) && validRefString()
+                && (Integer.parseInt(frames) <= 10 && Integer.parseInt(frames) >= 3) 
+                && (Integer.parseInt(length) <= 40 && Integer.parseInt(length) >= 10) 
+                && (Integer.parseInt(length) <= 40 && Integer.parseInt(length) >= 10) ) {
+            
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==fifoButton){
+            errorLabel.setText("");
             algorithmField.setText(fifoButton.getText());
         }
         else if(e.getSource()==lruButton){
+            errorLabel.setText("");
             algorithmField.setText(lruButton.getText());
         }
         else if(e.getSource()==optButton){
+            errorLabel.setText("");
             algorithmField.setText(optButton.getText());
         }
         else if(e.getSource()==scButton){
+            errorLabel.setText("");
             algorithmField.setText("Second Chance");
         }
         else if(e.getSource()==escButton){
-            algorithmField.setText("Enhanced Second Chance");
+            errorLabel.setText("");
+            algorithmField.setText("Enhanced Second Chance"); 
         }
         else if(e.getSource()==lfuButton){
+            errorLabel.setText("");
             algorithmField.setText(lfuButton.getText());
         }
         else if(e.getSource()==mfuButton){
+            errorLabel.setText("");
             algorithmField.setText(mfuButton.getText());
         }
         else if(e.getSource()==allButton){
+            errorLabel.setText("");
             algorithmField.setText(allButton.getText());
         }
         else if(e.getSource()==randomButton){
+            errorLabel.setText("");
             generateRandomInput();
         }
         else if(e.getSource()==textButton){
+            errorLabel.setText("");
             generateTextInput();
+        }
+        else if(e.getSource()==generateButton && !validateInput()){
+            errorLabel.setText("Invalid. Please check your inputs.");
+            System.out.println(validateInput());
         }
         else if(e.getSource()==resetButton || e.getSource()==backButton){
             clearInputs();

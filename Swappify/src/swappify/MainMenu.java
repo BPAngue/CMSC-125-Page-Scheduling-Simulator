@@ -16,6 +16,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -31,15 +32,16 @@ public class MainMenu extends JPanel implements ActionListener{
     public BufferedImage img, logo, bg;
     public Icon logoIcon;
     public Font archivoblack;
-    
-    StartPage startPanel = new StartPage();
+    public String token[];
+    Simulator simulator = new Simulator();
+    StartPage startPanel = new StartPage(simulator);
     Help helpPanel = new Help();
     About aboutPanel = new About();
+    PageSimulator simulatorPanel = new PageSimulator(simulator);
     
     public MainMenu (CardLayout cardLayout, JPanel cardPanel){
         this.cardLayout = cardLayout;
         this.cardPanel = cardPanel;
-        
         showComponents();
     }
     
@@ -102,10 +104,13 @@ public class MainMenu extends JPanel implements ActionListener{
         cardPanel.add(startPanel, "START");
         cardPanel.add(helpPanel, "HELP");
         cardPanel.add(aboutPanel, "ABOUT");
+        cardPanel.add(simulatorPanel, "SIMULATOR");
         
         startPanel.backButton.addActionListener(this);
+        startPanel.generateButton.addActionListener(this);
         helpPanel.backButton.addActionListener(this);
         aboutPanel.backButton.addActionListener(this);
+        simulatorPanel.backButton.addActionListener(this);
     }
     
     public JButton createButton(String text) {
@@ -157,11 +162,21 @@ public class MainMenu extends JPanel implements ActionListener{
         if (e.getSource()==exitButton){
             System.exit(0);
         }
-        else if (e.getSource()==startButton){
+        else if (e.getSource()==startButton || e.getSource()==simulatorPanel.backButton) {
+            simulator.clearAlgorithm();
+            simulator.clearNumberOfFrames();
+            simulator.clearReferenceLength();
+            simulator.clearReferenceString();
+            startPanel.clearInputs();
             cardLayout.show(cardPanel, "START");
         }
         else if (e.getSource()==startPanel.backButton || e.getSource()==helpPanel.backButton
                 || e.getSource()==aboutPanel.backButton){
+            simulator.clearAlgorithm();
+            simulator.clearNumberOfFrames();
+            simulator.clearReferenceLength();
+            simulator.clearReferenceString();
+            startPanel.clearInputs();
             cardLayout.show(cardPanel, "MAIN_MENU");
         }
         else if (e.getSource()==helpButton){
@@ -169,6 +184,21 @@ public class MainMenu extends JPanel implements ActionListener{
         }
         else if (e.getSource()==aboutButton){
             cardLayout.show(cardPanel, "ABOUT");
+        }
+        else if (e.getSource()==startPanel.generateButton && startPanel.validateInput()){
+            simulator.setAlgorithm(startPanel.algorithmField.getText());
+            simulator.setNumberOfFrames(startPanel.framesField.getText());
+            simulator.setReferenceLength(startPanel.lengthField.getText());
+            token = startPanel.rstringField.getText().split(" ");
+            for (String page : token) {
+                simulator.addPage(page);
+            }
+            cardPanel.remove(simulatorPanel);
+            simulatorPanel = new PageSimulator(simulator);
+            simulatorPanel.backButton.addActionListener(this);
+            cardPanel.add(simulatorPanel, "SIMULATOR");
+            simulatorPanel.startSimulation(simulator.getAlgorithm());
+            cardLayout.show(cardPanel, "SIMULATOR");
         }
     }
 }

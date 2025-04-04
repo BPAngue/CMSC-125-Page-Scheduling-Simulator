@@ -12,6 +12,7 @@ public class Help extends Panels{
     private JPanel header, footer;
     private JLabel titleLabel, helpLabel, logoLabel;
     public JButton backButton;
+    public JScrollPane helpScrollPane;
     
     public Help(){
     
@@ -30,19 +31,42 @@ public class Help extends Panels{
         header.add(titleLabel);
         header.add(logoLabel);
         
-        String helpString = "<html>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,</html>";
+        String helpString = "<html><h2>Page Replacement Simulator Instructions</h2>"
+                            + "<p>Welcome to the Page Replacement Simulator. This tool helps visualize and simulate various page replacement algorithms. Please follow the steps below to use the simulator:</p>"
+                            + "<ul>"
+                            + "<li><strong>FIFO (First-In-First-Out):</strong> This algorithm replaces the page that has been in memory the longest. Simply select this option to simulate FIFO behavior.</li>"
+                            + "<li><strong>LRU (Least Recently Used):</strong> LRU replaces the page that has not been used for the longest period of time. Select this algorithm to observe LRU's page replacement actions.</li>"
+                            + "<li><strong>OPT (Optimal):</strong> The OPT algorithm replaces the page that will not be used for the longest period of time in the future. Choose this option for an optimal replacement strategy.</li>"
+                            + "<li><strong>Second Chance Algorithm:</strong> This is a variation of FIFO where each page gets a second chance before being replaced. The page is only replaced if it has been referenced.</li>"
+                            + "<li><strong>Enhanced Second Chance Algorithm:</strong> A modification of the Second Chance algorithm that assigns a higher priority to pages that have been accessed recently and provides a more efficient way to decide which pages to replace.</li>"
+                            + "<li><strong>LFU (Least Frequently Used):</strong> LFU replaces the page that has been used the least number of times. This algorithm keeps track of the frequency of access to determine which page to remove.</li>"
+                            + "<li><strong>MFU (Most Frequently Used):</strong> MFU replaces the page that has been accessed the most times. This algorithm assumes that a frequently used page is likely to be replaced soon, so it removes it.</li>"
+                            + "</ul>"
+                            + "<p>Steps to use the simulator:</p>"
+                            + "<ol>"
+                            + "<li>Input the number of pages and frames you want to simulate.</li>"
+                            + "<li>Choose the page replacement algorithm you want to test from the list.</li>"
+                            + "<li>Provide a page reference string (a sequence of page numbers).</li>"
+                            + "<li>Click on the 'Simulate' button to run the simulation and observe the page replacements.</li>"
+                            + "<li>Analyze the results, including the number of page faults for the selected algorithm.</li>"
+                            + "</ol>"
+                            + "<p>If you need further assistance, feel free to contact support or refer to the documentation provided.</p></html>";
                 
-        helpLabel = createLabel(680, 420, white, helpString, archivonarrow, 19f);
+        helpLabel = createLabel(660, 920, white, helpString, archivonarrow, 19f);
+        
+        helpScrollPane = new JScrollPane(helpLabel);
+        helpScrollPane.setPreferredSize(new Dimension(680, 420));
+        helpScrollPane.setOpaque(false);
         
         footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 70,30));
         footer.setPreferredSize(new Dimension(1000, 100));
         footer.setOpaque(false);
         
-        backButton = createButton(150, 40, "BACK", gray, white, 20);
+        backButton = createButton(150, 40, "BACK", gray, white, 20, null);
         footer.add(backButton);
         
         add(header);
-        add(helpLabel);
+        add(helpScrollPane);
         add(footer);
     }
 }

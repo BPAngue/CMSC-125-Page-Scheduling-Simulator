@@ -18,13 +18,13 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 
 public class Panels extends JPanel{
     public Font font;
     public final Font archivoblack = getFont("archivoblack"); 
     public final Font archivonarrow = getFont("archivonarrow"); 
-    
     
     public BufferedImage img;
     public final BufferedImage logo = getImg("/img/logo.png");
@@ -40,6 +40,8 @@ public class Panels extends JPanel{
     public final Color green = new Color(24,121,76);
     public final Color darkgreen = new Color(35, 102, 46);
     public final Color red = new Color(188,24,35);   
+    
+    public final int center = SwingConstants.CENTER;
     
     public Panels(){
         showComponents();
@@ -61,17 +63,6 @@ public class Panels extends JPanel{
         return button;
     }
     
-    public JButton createButton(int width, int height, String text, Color background, Color foreground, int size) {
-        JButton button = new JButton(text);
-        button.setBackground(background);
-        button.setForeground(foreground);
-        button.setPreferredSize(new Dimension(width, height));
-        button.setFont(archivoblack.deriveFont(Font.BOLD, size));
-        button.setFocusable(false);
-        button.setBorderPainted(false);
-        return button;
-    }
-    
     public JButton createButton(int width, int height, String text, Color background, Color foreground, Color border, float size, ActionListener l) {
         JButton button = new JButton(text);
         button.setBackground(background);
@@ -84,6 +75,17 @@ public class Panels extends JPanel{
         return button;
     }
     
+    public JButton createButton(int width, int height, String text, Color background, Color foreground, Color border, float size, int borderwidth, ActionListener l) {
+        JButton button = new JButton(text);
+        button.setBackground(background);
+        button.setForeground(foreground);
+        button.setPreferredSize(new Dimension(width, height));
+        button.setFont(archivoblack.deriveFont(size));
+        button.setFocusable(false);
+        button.setBorder(BorderFactory.createLineBorder(foreground, borderwidth));
+        button.addActionListener(l);
+        return button;
+    }
     
     public Font getFont(String filepath){
         try {
@@ -136,9 +138,9 @@ public class Panels extends JPanel{
         textfield.setPreferredSize(new Dimension(width, height));
         textfield.setForeground(foreground);
         textfield.setFont(archivoblack.deriveFont(size));
-        textfield.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(),
+        textfield.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(white, 1),
                 BorderFactory.createEmptyBorder(0,10,0,0)));
-        textfield.setBackground(Color.WHITE);
+        textfield.setBackground(white);
         textfield.setEditable(true);
         
         return textfield;
