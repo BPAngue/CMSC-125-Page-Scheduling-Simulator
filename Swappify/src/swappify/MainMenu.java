@@ -37,6 +37,7 @@ public class MainMenu extends JPanel implements ActionListener{
     Help helpPanel = new Help();
     About aboutPanel = new About();
     PageSimulator simulatorPanel = new PageSimulator(simulator);
+    PageSimulatorAll allPanel = new PageSimulatorAll(simulator);
     
     public MainMenu (CardLayout cardLayout, JPanel cardPanel){
         this.cardLayout = cardLayout;
@@ -104,12 +105,15 @@ public class MainMenu extends JPanel implements ActionListener{
         cardPanel.add(helpPanel, "HELP");
         cardPanel.add(aboutPanel, "ABOUT");
         cardPanel.add(simulatorPanel, "SIMULATOR");
+        cardPanel.add(allPanel, "ALL");
         
         startPanel.backButton.addActionListener(this);
         startPanel.generateButton.addActionListener(this);
+        startPanel.allButton.addActionListener(this);
         helpPanel.backButton.addActionListener(this);
         aboutPanel.backButton.addActionListener(this);
         simulatorPanel.backButton.addActionListener(this);
+        allPanel.backButton.addActionListener(this);
     }
     
     public JButton createButton(String text) {
@@ -161,7 +165,8 @@ public class MainMenu extends JPanel implements ActionListener{
         if (e.getSource()==exitButton){
             System.exit(0);
         }
-        else if (e.getSource()==startButton || e.getSource()==simulatorPanel.backButton) {
+        else if (e.getSource()==startButton || e.getSource()==simulatorPanel.backButton ||
+                e.getSource()==allPanel.backButton) {
             simulator.clearAlgorithm();
             simulator.clearNumberOfFrames();
             simulator.clearReferenceLength();
@@ -183,6 +188,9 @@ public class MainMenu extends JPanel implements ActionListener{
         }
         else if (e.getSource()==aboutButton){
             cardLayout.show(cardPanel, "ABOUT");
+        }
+        else if (e.getSource()==startPanel.allButton ){
+            cardLayout.show(cardPanel, "ALL");
         }
         else if (e.getSource()==startPanel.generateButton && startPanel.validateInput()){
             simulator.setAlgorithm(startPanel.algorithmField.getText());

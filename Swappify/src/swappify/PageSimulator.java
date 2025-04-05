@@ -1,6 +1,8 @@
 package swappify;
 
-import java.awt.Color;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfWriter;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
@@ -8,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,41 +48,40 @@ public class PageSimulator extends Panels implements ActionListener{
         setLayout(new FlowLayout(FlowLayout.CENTER, 0,0));
         
         header = new JPanel(new FlowLayout(FlowLayout.CENTER, 0,25));
-        header.setPreferredSize(new Dimension (1480, 200));
+        header.setPreferredSize(new Dimension (1480, 180));
         header.setOpaque(false);
         
         logoLabel = new JLabel();
         logoLabel.setIcon(smallLogoIcon);
         
         leftPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0,10));
-        leftPanel.setPreferredSize(new Dimension(493, 200));
+        leftPanel.setPreferredSize(new Dimension(300, 200));
         leftPanel.setOpaque(false);
         leftPanel.add(logoLabel);
         
         centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20,10));
-        centerPanel.setPreferredSize(new Dimension(493, 200));
+        centerPanel.setPreferredSize(new Dimension(880, 200));
         centerPanel.setOpaque(false);
         
-        titleLabel = createLabel(330, 80, white, "" + " " + simulator.getAlgorithm(), 20);
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(40, 0, 0, 0));
+        titleLabel = createLabel(820, 80, white,   simulator.getAlgorithm(), 20);
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(30, 0, 0, 0));
         titleLabel.setHorizontalAlignment(center);
         
-        pdfButton = createButton(135, 40, "Save as PDF", darkgreen, white, white,14, null);
-        imgButton = createButton(135, 40, "Save as Image", darkgreen, white, white,14, null);
-        imgButton.addActionListener(this);
+        pdfButton = createButton(135, 40, "Save as PDF", darkgreen, white, white,14, this);
+        imgButton = createButton(135, 40, "Save as Image", darkgreen, white, white,14, this);
         
         centerPanel.add(titleLabel);
         centerPanel.add(pdfButton);
         centerPanel.add(imgButton);
         
-        rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0,50));
-        rightPanel.setPreferredSize(new Dimension(493, 200));
+        rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0,40));
+        rightPanel.setPreferredSize(new Dimension(300, 200));
         rightPanel.setOpaque(false);
         
-        backButton = createButton(200, 40, "BACK", gray, white,20, null);
+        backButton = createButton(155, 40, "BACK", gray, white,20, null);
         
         timerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        timerPanel.setPreferredSize(new Dimension(300, 40));
+        timerPanel.setPreferredSize(new Dimension(155, 40));
         timerPanel.setBorder(BorderFactory.createLineBorder(white, 1));
         timerPanel.setBackground(darkgreen);
         
@@ -100,14 +102,14 @@ public class PageSimulator extends Panels implements ActionListener{
                         BorderFactory.createEmptyBorder(10, 10, 10,10))));
         
         infoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
-        infoPanel.setBackground(Color.white);
+        infoPanel.setBackground(green);
         int infoPanelHeight;
         
         pageRefPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        pageRefPanel.setBackground(Color.white);
+        pageRefPanel.setBackground(green);
         pageRefValuesTitle = new JLabel("Page reference: ");
-        pageRefValuesTitle.setFont(archivoblack.deriveFont(20f));
-        pageRefValuesTitle.setForeground(new Color(0, 128, 0));
+        pageRefValuesTitle.setFont(archivoblack.deriveFont(16f));
+        pageRefValuesTitle.setForeground(white);
         pageRefPanel.add(pageRefValuesTitle);
         
         int count = 0;
@@ -119,17 +121,17 @@ public class PageSimulator extends Panels implements ActionListener{
             
             pageRefValues = new JLabel(pageText);
             pageRefValues.setFont(archivoblack.deriveFont(13f));
-            pageRefValues.setForeground(new Color(0, 128, 0));
+            pageRefValues.setForeground(white);
             pageRefPanel.add(pageRefValues);
             count++;
         }
         
         numPageFramePanel = new JPanel();
-        numPageFramePanel.setBackground(Color.white);
+        numPageFramePanel.setBackground(green);
         
         numPageFrameValue = new JLabel("No. of Page frame: " + simulator.getNumberOfFrames());
-        numPageFrameValue.setFont(archivoblack.deriveFont(20f));
-        numPageFrameValue.setForeground(new Color(0, 128, 0));
+        numPageFrameValue.setFont(archivoblack.deriveFont(16f));
+        numPageFrameValue.setForeground(white);
         numPageFramePanel.add(numPageFrameValue);
         
         infoPanel.add(pageRefPanel);
@@ -142,8 +144,8 @@ public class PageSimulator extends Panels implements ActionListener{
         
         // change this with the drawing panel
         draw = new Draw(simulator.getPages(), pageFramesPerColumn, hitMissLabel, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFault);
-        draw.setPreferredSize(new Dimension(1460, 420 - infoPanelHeight));
-        draw.setBackground(Color.white);
+        draw.setPreferredSize(new Dimension(1462, 434 - infoPanelHeight));
+        draw.setBackground(white);
         
         framePanel.add(infoPanel);
         framePanel.add(draw);
@@ -152,8 +154,8 @@ public class PageSimulator extends Panels implements ActionListener{
         header.add(centerPanel);
         header.add(rightPanel);
         
-        footer = new JPanel(new FlowLayout(FlowLayout.CENTER, 100,5));
-        footer.setPreferredSize(new Dimension(1000, 60));
+        footer = new JPanel(new FlowLayout(FlowLayout.CENTER, 480,5));
+        footer.setPreferredSize(new Dimension(1460, 60));
         footer.setOpaque(false);
         
         speedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0,10));
@@ -243,9 +245,30 @@ public class PageSimulator extends Panels implements ActionListener{
         // Save the image as a PNG file
         File pngFile = new File(fileName + ".png");
         ImageIO.write(image, "PNG", pngFile);
-        System.out.println("Saved as PNG: " + pngFile.getAbsolutePath());
+        //System.out.println("Saved as PNG: " + pngFile.getAbsolutePath());
         
         return pngFile;
+    }
+    
+    public void savePanelAsPDF(String filePath) throws Exception {
+        // Create a BufferedImage and paint the panel onto it
+
+        BufferedImage image = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = image.createGraphics();
+        this.printAll(g2d);
+        g2d.dispose();
+
+        // Create PDF document
+        Document document = new Document(new com.itextpdf.text.Rectangle(this.getWidth(), this.getHeight()));
+        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(filePath));
+        document.open();
+
+        PdfContentByte contentByte = writer.getDirectContent();
+        com.itextpdf.text.Image pdfImage = com.itextpdf.text.Image.getInstance(image, null);
+        pdfImage.setAbsolutePosition(0, 0);
+        contentByte.addImage(pdfImage);
+
+        document.close();
     }
 
     @Override
@@ -260,6 +283,18 @@ public class PageSimulator extends Panels implements ActionListener{
                 JOptionPane.showMessageDialog(this, "File successfully saved as " + pngFile.getAbsolutePath(), "Save Successful", JOptionPane.INFORMATION_MESSAGE);
             } catch (IOException f) {
                 f.printStackTrace();
+            }
+        }
+        
+        else if (e.getSource() == pdfButton) {
+            SimpleDateFormat sdf = new SimpleDateFormat("MMddyy_HHmmss");
+            String timestamp = sdf.format(new Date());
+
+            try {
+                savePanelAsPDF(timestamp + "_PG.pdf");
+                JOptionPane.showMessageDialog(this, "File successfully saved as " + timestamp + "_PG.pdf", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception ex) {
+               ex.printStackTrace();
             }
         }
     }

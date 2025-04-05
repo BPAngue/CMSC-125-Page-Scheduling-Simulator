@@ -1,7 +1,6 @@
 package swappify;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import javax.swing.JPanel;
@@ -16,6 +15,8 @@ public class Draw extends JPanel {
     private int currentColumn = -1;
     private int horizontalSpacing = 20;
     public int speed = 1000;
+    
+    Panels panels = new Panels();
     
     public Draw(ArrayList<Integer> pageNumberLabel, ArrayList<ArrayList<Integer>> pageFramesPerColumn, ArrayList<String> hitMissLabel, int referenceStringLength, int numberOfPageFrames, int totalPageFault) {
         this.pageNumberLabel = pageNumberLabel;
@@ -50,13 +51,16 @@ public class Draw extends JPanel {
         int horizontalMargin = 20;
         int verticalMargin = 10 + topLabelsHeight;
         
-        if (referenceStringLength < 15) {
+        if (referenceStringLength < 15){
             horizontalSpacing = 55;
-        } else if (referenceStringLength < 19) {
+        }
+        else if (referenceStringLength < 19){
             horizontalSpacing = 30;
-        } else if (referenceStringLength > 29) {
+        }
+        else if (referenceStringLength > 29){
             horizontalSpacing = 5;
         }
+        
 
         int availableWidth = panelWidth - (5 * horizontalMargin);
         int boxWidth = Math.min(50, (availableWidth - ((referenceStringLength - 1) * horizontalSpacing)) / referenceStringLength);
@@ -70,13 +74,13 @@ public class Draw extends JPanel {
 
         for (int col = 0; col <= currentColumn && col < referenceStringLength; col++) {
             if (col == currentColumn) {
-                g.setColor(new Color(220, 240, 255));
+                g.setColor(new Color(144, 238, 144));
                 g.fillRect(x, verticalMargin, boxWidth, boxHeight * numberOfPageFrames);
             }
 
             if (pageNumberLabel != null && col < pageNumberLabel.size()) {
-                g.setColor(Color.BLACK);
-                g.setFont(new Font("Arial", Font.BOLD, 12));
+                g.setColor(panels.green);
+                g.setFont(panels.archivoblack.deriveFont(13f));
                 g.drawString(String.valueOf(pageNumberLabel.get(col)), x + (boxWidth / 2) - 5, verticalMargin - 15);
             }
 
@@ -84,13 +88,13 @@ public class Draw extends JPanel {
 
             ArrayList<Integer> currentFrame = pageFramesPerColumn.get(col);
             for (int row = 0; row < numberOfPageFrames; row++) {
-                g.setColor(Color.BLACK);
+                g.setColor(panels.green);
                 g.drawRect(x, y, boxWidth, boxHeight);
 
                 if (row < currentFrame.size()) {
                     Integer val = currentFrame.get(numberOfPageFrames - 1 - row);
                     if (val != null) {
-                        g.setFont(new Font("Arial", Font.PLAIN, 14));
+                        g.setFont(panels.archivoblack.deriveFont(13f));
                         g.drawString(String.valueOf(val), x + boxWidth / 2 - 5, y + boxHeight / 2 + 5);
                     }
                 }
@@ -99,8 +103,8 @@ public class Draw extends JPanel {
             }
 
             if (hitMissLabel != null && col < hitMissLabel.size()) {
-                g.setColor(hitMissLabel.get(col).equalsIgnoreCase("HIT") ? new Color(0, 128, 0) : Color.RED);
-                g.setFont(new Font("Arial", Font.BOLD, 12));
+                g.setColor(hitMissLabel.get(col).equalsIgnoreCase("HIT") ? panels.green : panels.red);
+                g.setFont(panels.archivoblack.deriveFont(12f));
                 g.drawString(hitMissLabel.get(col), x + (boxWidth / 2) - 15,
                         verticalMargin + (boxHeight * numberOfPageFrames) + 20);
             }
@@ -108,8 +112,8 @@ public class Draw extends JPanel {
             x += boxWidth + horizontalSpacing;
         }
 
-        g.setColor(Color.BLACK);
-        g.setFont(new Font("Arial", Font.BOLD, 14));
+        g.setColor(panels.green);
+        g.setFont(panels.archivoblack.deriveFont(16f));
         g.drawString("Total Page Faults: " + totalPageFault, horizontalMargin, panelHeight - 20);
     }
 }
