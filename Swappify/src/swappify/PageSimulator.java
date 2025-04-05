@@ -3,7 +3,6 @@ package swappify;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfWriter;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
@@ -16,8 +15,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -206,7 +203,7 @@ public class PageSimulator extends Panels implements ActionListener{
         // Save the image as a PNG file
         File pngFile = new File(fileName + ".png");
         ImageIO.write(image, "PNG", pngFile);
-        System.out.println("Saved as PNG: " + pngFile.getAbsolutePath());
+        //System.out.println("Saved as PNG: " + pngFile.getAbsolutePath());
         
         return pngFile;
     }
@@ -255,8 +252,7 @@ public class PageSimulator extends Panels implements ActionListener{
                 savePanelAsPDF(timestamp + "_PG.pdf");
                 JOptionPane.showMessageDialog(this, "File successfully saved as " + timestamp + "_PG.pdf", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception ex) {
-               // Logger.getLogger(PageSimulator.class.getName()).
-                 //       log(Level.SEVERE, null, ex);
+               ex.printStackTrace();
             }
         }
     }
