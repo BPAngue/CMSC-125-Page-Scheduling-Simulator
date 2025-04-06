@@ -255,8 +255,7 @@ public class StartPage extends Panels implements ActionListener{
             
             if (!stringDetails.isEmpty()) {
                 framesField.setText(stringDetails.get(0));
-                lengthField.setText(stringDetails.get(1));
-                rstringField.setText(stringDetails.get(2));
+                rstringField.setText(stringDetails.get(1));
             } else {
                 System.out.println("No data found in file");
             }

@@ -80,6 +80,14 @@ public class PageSimulatorAll extends Panels implements ActionListener{
     private int totalPageFaultLfu;
     private int totalPageFaultMfu;
     
+    // classes
+    private FIFO fifo;
+    private LRU lru;
+    private Optimal opt;
+    private SecondChance sc;
+    private LFU lfu;
+    private MFU mfu;
+    
     // threads
     private Thread fifoThread;
     private Thread lruThread;
@@ -227,30 +235,41 @@ public class PageSimulatorAll extends Panels implements ActionListener{
         
         // i want to simultaneously start all of the simulation classes here
         // call all of the simulator classes
-        fifoThread = new Thread(new FIFO(simulator.getPages(), pageFramesFifo, pageNumberLabelFifo, 
+        fifo = new FIFO(simulator.getPages(), pageFramesFifo, pageNumberLabelFifo, 
                 hitMissLabelFifo, simulator.getNumberOfFrames(), totalPageFaultFifo, fifoDraw, 
                 pageFramesPerColumnFifo, timerLabel, pdfButton, imgButton, restartButton, 
-                plusButton, minusButton, simulationSpeed));
-        lruThread = new Thread (new LRU(simulator.getPages(), pageFramesLru, pageNumberLabelLru, 
+                plusButton, minusButton, simulationSpeed);
+        fifoThread = new Thread(fifo);
+        
+        lru = new LRU(simulator.getPages(), pageFramesLru, pageNumberLabelLru, 
                 hitMissLabelLru, simulator.getNumberOfFrames(), totalPageFaultLru, lruDraw, 
                 pageFramesPerColumnLru, timerLabel, pdfButton, imgButton, restartButton, 
-                plusButton, minusButton, simulationSpeed));
-        optThread = new Thread (new Optimal(simulator.getPages(), pageFramesOpt, pageNumberLabelOpt, 
+                plusButton, minusButton, simulationSpeed);
+        lruThread = new Thread(lru);
+        
+        opt = new Optimal(simulator.getPages(), pageFramesOpt, pageNumberLabelOpt, 
                 hitMissLabelOpt, simulator.getNumberOfFrames(), totalPageFaultOpt, optDraw, 
                 pageFramesPerColumnOpt, timerLabel, pdfButton, imgButton, restartButton, 
-                plusButton, minusButton, simulationSpeed));
-        scThread = new Thread (new SecondChance(simulator.getPages(), pageFramesSc, pageNumberLabelSc, 
+                plusButton, minusButton, simulationSpeed);
+        optThread = new Thread(opt);
+        
+        sc = new SecondChance(simulator.getPages(), pageFramesSc, pageNumberLabelSc, 
                 hitMissLabelSc, simulator.getNumberOfFrames(), totalPageFaultSc, scDraw, 
                 pageFramesPerColumnSc, timerLabel, pdfButton, imgButton, restartButton, 
-                plusButton, minusButton, simulationSpeed));
-        lfuThread = new Thread (new LFU(simulator.getPages(), pageFramesLfu, pageNumberLabelLfu, 
+                plusButton, minusButton, simulationSpeed);
+        scThread = new Thread(sc);
+        
+        lfu = new LFU(simulator.getPages(), pageFramesLfu, pageNumberLabelLfu, 
                 hitMissLabelLfu, simulator.getNumberOfFrames(), totalPageFaultLfu, lfuDraw, 
                 pageFramesPerColumnLfu, timerLabel, pdfButton, imgButton, restartButton, 
-                plusButton, minusButton, simulationSpeed));
-        mfuThread = new Thread (new MFU(simulator.getPages(), pageFramesMfu, pageNumberLabelMfu, 
+                plusButton, minusButton, simulationSpeed);
+        lfuThread = new Thread(lfu);
+        
+        mfu = new MFU(simulator.getPages(), pageFramesMfu, pageNumberLabelMfu, 
                 hitMissLabelMfu, simulator.getNumberOfFrames(), totalPageFaultMfu, mfuDraw, 
                 pageFramesPerColumnMfu, timerLabel, pdfButton, imgButton, restartButton, 
-                plusButton, minusButton, simulationSpeed));
+                plusButton, minusButton, simulationSpeed);
+        mfuThread = new Thread(mfu);
         
         // start threads
         fifoThread.start();
@@ -448,6 +467,13 @@ public class PageSimulatorAll extends Panels implements ActionListener{
                 plusButton.setEnabled(true);
                 minusButton.setEnabled(true);
             } else if (restartButton.getText().equals("Restart")) {
+                startSimulation();
+                fifo.restartSimulation();
+                lru.restartSimulation();
+                opt.restartSimulation();
+                sc.restartSimulation();
+                lfu.restartSimulation();
+                mfu.restartSimulation();
                 // for debugging
                 System.out.println(simulator.getPages());
                 System.out.println("Restart Simulation!"); // for debugging
@@ -487,11 +513,11 @@ public class PageSimulatorAll extends Panels implements ActionListener{
     }
     
     public void stopCurrentSimulation() {
-        fifoThread.interrupt();
-        lruThread.interrupt();
-        optThread.interrupt();
-        scThread.interrupt();
-        lfuThread.interrupt();
-        mfuThread.interrupt();
+        fifo.stopSimulation();
+        lru.stopSimulation();
+        opt.stopSimulation();
+        sc.stopSimulation();
+        lfu.stopSimulation();
+        mfu.stopSimulation();
     }
 }

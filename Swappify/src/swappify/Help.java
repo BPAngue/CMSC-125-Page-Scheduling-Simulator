@@ -6,6 +6,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 
 public class Help extends Panels{
     
@@ -47,7 +48,7 @@ public class Help extends Panels{
                             + "<li>Input the number of pages and frames you want to simulate.</li>"
                             + "<li>Choose the page replacement algorithm you want to test from the list.</li>"
                             + "<li>Provide a page reference string (a sequence of page numbers).</li>"
-                            + "<li>Click on the 'Simulate' button to run the simulation and observe the page replacements.</li>"
+                            + "<li>Click on the 'Generate' button to run the simulation and observe the page replacements.</li>"
                             + "<li>Analyze the results, including the number of page faults for the selected algorithm.</li>"
                             + "</ol>"
                             + "<p>If you need further assistance, feel free to contact support or refer to the documentation provided.</p></html>";
@@ -57,6 +58,43 @@ public class Help extends Panels{
         helpScrollPane = new JScrollPane(helpLabel);
         helpScrollPane.setPreferredSize(new Dimension(680, 420));
         helpScrollPane.setOpaque(false);
+        helpScrollPane.getViewport().setOpaque(false);
+        helpScrollPane.setBorder(null);
+        helpScrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(8, Integer.MAX_VALUE));
+        helpScrollPane.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
+            @Override
+            protected void paintThumb(java.awt.Graphics g, javax.swing.JComponent c, java.awt.Rectangle thumbBounds) {
+                g.setColor(new java.awt.Color(0x4CAF50)); // Material green
+                g.fillRoundRect(thumbBounds.x, thumbBounds.y, thumbBounds.width, thumbBounds.height, 10, 10);
+            }
+
+            @Override
+            protected void paintTrack(java.awt.Graphics g, javax.swing.JComponent c, java.awt.Rectangle trackBounds) {
+                g.setColor(new java.awt.Color(0, 0, 0, 0)); // fully transparent
+                g.fillRect(trackBounds.x, trackBounds.y, trackBounds.width, trackBounds.height);
+            }
+
+            @Override
+            protected JButton createDecreaseButton(int orientation) {
+                return createZeroButton();
+            }
+
+            @Override
+            protected JButton createIncreaseButton(int orientation) {
+                return createZeroButton();
+            }
+
+            private JButton createZeroButton() {
+                JButton button = new JButton();
+                button.setPreferredSize(new Dimension(0, 0));
+                button.setMinimumSize(new Dimension(0, 0));
+                button.setMaximumSize(new Dimension(0, 0));
+                button.setVisible(false);
+                return button;
+            }
+        });
+
+        helpLabel.setOpaque(false);
         
         footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 70,30));
         footer.setPreferredSize(new Dimension(1000, 100));
