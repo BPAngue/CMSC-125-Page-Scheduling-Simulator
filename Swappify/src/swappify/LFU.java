@@ -31,7 +31,7 @@ public class LFU implements Runnable {
     public String referenceString;
     public Timer timer;
     public int time;
-    public int seconds = 1;
+    public int seconds = 0;
     public int minutes = 0;
     public int simulationSpeed;
     
@@ -65,10 +65,14 @@ public class LFU implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (time < referenceStringValues.size()) {
-                    if (seconds == 60) {
+                    /*if (seconds == 60) {
                         seconds = 0;
                         minutes++;
-                    }
+                    }*/
+                    
+                    int elapsedMillis = (time + 1) * simulationSpeed;
+                    minutes = (elapsedMillis / 1000) / 60;
+                    seconds = (elapsedMillis / 1000) % 60;
                     String timeValue = String.format("%02d:%02d", minutes, seconds);
                     timerLabel.setText("Timer: " + timeValue);
                     
@@ -203,7 +207,7 @@ public class LFU implements Runnable {
         pageFrequency.clear();
         insertionOrder.clear();
         time = 0;
-        seconds = 1;
+        seconds = 0;
         minutes = 0;
             
         // clear all frame and label data
