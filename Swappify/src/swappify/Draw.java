@@ -3,6 +3,7 @@ package swappify;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.Objects;
 import javax.swing.JPanel;
 
 public class Draw extends JPanel {
@@ -14,7 +15,7 @@ public class Draw extends JPanel {
     public int totalPageFault = 0;
     private int currentColumn = -1;
     private int horizontalSpacing = 20;
-    public int speed = 1000;
+    public int speed;
     
     Panels panels = new Panels();
     
@@ -94,6 +95,18 @@ public class Draw extends JPanel {
                 if (row < currentFrame.size()) {
                     Integer val = currentFrame.get(numberOfPageFrames - 1 - row);
                     if (val != null) {
+                        if (hitMissLabel != null && col < hitMissLabel.size()) {
+                            String hitMiss = hitMissLabel.get(col);
+                            if (hitMiss.equalsIgnoreCase("MISS")) {
+                                if (pageNumberLabel != null && col < pageNumberLabel.size()) {
+                                    if (Objects.equals(val, pageNumberLabel.get(col))) {
+                                        g.setColor(panels.red);
+                                        System.out.println("number is colored red");
+                                    }
+                                }
+                            }
+                            
+                        }
                         g.setFont(panels.archivoblack.deriveFont(13f));
                         g.drawString(String.valueOf(val), x + boxWidth / 2 - 5, y + boxHeight / 2 + 5);
                     }
@@ -115,5 +128,13 @@ public class Draw extends JPanel {
         g.setColor(panels.green);
         g.setFont(panels.archivoblack.deriveFont(16f));
         g.drawString("Total Page Faults: " + totalPageFault, horizontalMargin, panelHeight - 20);
+        System.out.println("Speed inside draw: " + speed); // for debugging
+    }
+    
+    public void clearValues() {
+        pageFramesPerColumn.clear();
+        hitMissLabel.clear();
+        totalPageFault = 0;
+        currentColumn = -1;
     }
 }

@@ -12,13 +12,18 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/User/Documents/Rosemarie's%20Files/CMSC-125-Page-Scheduling-Simulator/Swappify/src/swappify/Draw.java</file>
-            <file>file:/C:/Users/User/Documents/Rosemarie's%20Files/CMSC-125-Page-Scheduling-Simulator/Swappify/src/swappify/MainMenu.java</file>
-            <file>file:/C:/Users/User/Documents/Rosemarie's%20Files/CMSC-125-Page-Scheduling-Simulator/Swappify/src/swappify/Simulator.java</file>
-            <file>file:/C:/Users/User/Documents/Rosemarie's%20Files/CMSC-125-Page-Scheduling-Simulator/Swappify/src/swappify/SwappifyMain.java</file>
-            <file>file:/C:/Users/User/Documents/Rosemarie's%20Files/CMSC-125-Page-Scheduling-Simulator/Swappify/src/swappify/PageSimulator.java</file>
-            <file>file:/C:/Users/User/Documents/Rosemarie's%20Files/CMSC-125-Page-Scheduling-Simulator/Swappify/src/swappify/PageSimulatorAll.java</file>
-            <file>file:/C:/Users/User/Documents/Rosemarie's%20Files/CMSC-125-Page-Scheduling-Simulator/Swappify/src/swappify/StartPage.java</file>
+            <file>file:/C:/Users/Brian%20Pangue/Documents/Brian%20Files/UP/UP%20CompSci/3rd%20Year/2nd%20Semester/CMSC%20125%20-%20Operating%20Systems/Laboratory/Page%20Replacement%20Simulator/CMSC-125-Page-Scheduling-Simulator/Swappify/src/swappify/Optimal.java</file>
+            <file>file:/C:/Users/Brian%20Pangue/Documents/Brian%20Files/UP/UP%20CompSci/3rd%20Year/2nd%20Semester/CMSC%20125%20-%20Operating%20Systems/Laboratory/Page%20Replacement%20Simulator/CMSC-125-Page-Scheduling-Simulator/Swappify/src/swappify/Simulator.java</file>
+            <file>file:/C:/Users/Brian%20Pangue/Documents/Brian%20Files/UP/UP%20CompSci/3rd%20Year/2nd%20Semester/CMSC%20125%20-%20Operating%20Systems/Laboratory/Page%20Replacement%20Simulator/CMSC-125-Page-Scheduling-Simulator/Swappify/src/swappify/MFU.java</file>
+            <file>file:/C:/Users/Brian%20Pangue/Documents/Brian%20Files/UP/UP%20CompSci/3rd%20Year/2nd%20Semester/CMSC%20125%20-%20Operating%20Systems/Laboratory/Page%20Replacement%20Simulator/CMSC-125-Page-Scheduling-Simulator/Swappify/src/swappify/Draw.java</file>
+            <file>file:/C:/Users/Brian%20Pangue/Documents/Brian%20Files/UP/UP%20CompSci/3rd%20Year/2nd%20Semester/CMSC%20125%20-%20Operating%20Systems/Laboratory/Page%20Replacement%20Simulator/CMSC-125-Page-Scheduling-Simulator/Swappify/src/swappify/MainMenu.java</file>
+            <file>file:/C:/Users/Brian%20Pangue/Documents/Brian%20Files/UP/UP%20CompSci/3rd%20Year/2nd%20Semester/CMSC%20125%20-%20Operating%20Systems/Laboratory/Page%20Replacement%20Simulator/CMSC-125-Page-Scheduling-Simulator/Swappify/src/swappify/About.java</file>
+            <file>file:/C:/Users/Brian%20Pangue/Documents/Brian%20Files/UP/UP%20CompSci/3rd%20Year/2nd%20Semester/CMSC%20125%20-%20Operating%20Systems/Laboratory/Page%20Replacement%20Simulator/CMSC-125-Page-Scheduling-Simulator/Swappify/src/swappify/LRU.java</file>
+            <file>file:/C:/Users/Brian%20Pangue/Documents/Brian%20Files/UP/UP%20CompSci/3rd%20Year/2nd%20Semester/CMSC%20125%20-%20Operating%20Systems/Laboratory/Page%20Replacement%20Simulator/CMSC-125-Page-Scheduling-Simulator/Swappify/src/swappify/LFU.java</file>
+            <file>file:/C:/Users/Brian%20Pangue/Documents/Brian%20Files/UP/UP%20CompSci/3rd%20Year/2nd%20Semester/CMSC%20125%20-%20Operating%20Systems/Laboratory/Page%20Replacement%20Simulator/CMSC-125-Page-Scheduling-Simulator/Swappify/src/swappify/FIFO.java</file>
+            <file>file:/C:/Users/Brian%20Pangue/Documents/Brian%20Files/UP/UP%20CompSci/3rd%20Year/2nd%20Semester/CMSC%20125%20-%20Operating%20Systems/Laboratory/Page%20Replacement%20Simulator/CMSC-125-Page-Scheduling-Simulator/Swappify/src/swappify/StartPage.java</file>
+            <file>file:/C:/Users/Brian%20Pangue/Documents/Brian%20Files/UP/UP%20CompSci/3rd%20Year/2nd%20Semester/CMSC%20125%20-%20Operating%20Systems/Laboratory/Page%20Replacement%20Simulator/CMSC-125-Page-Scheduling-Simulator/Swappify/src/swappify/PageSimulator.java</file>
+            <file>file:/C:/Users/Brian%20Pangue/Documents/Brian%20Files/UP/UP%20CompSci/3rd%20Year/2nd%20Semester/CMSC%20125%20-%20Operating%20Systems/Laboratory/Page%20Replacement%20Simulator/CMSC-125-Page-Scheduling-Simulator/Swappify/src/swappify/Help.java</file>
         </group>
     </open-files>
 </project-private>

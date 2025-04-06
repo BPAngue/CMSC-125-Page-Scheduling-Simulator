@@ -166,14 +166,14 @@ public class PageSimulator extends Panels implements ActionListener{
         plusButton = createButton(60,40, "+", green, white, white, 20, 1, this);
         speedTextField = createField(200, 40, darkgreen, 16);
         speedTextField.setEditable(false);
-        speedTextField.setText("SPEED");
+        speedTextField.setText("1000");
         speedTextField.setHorizontalAlignment(center);
         
         speedPanel.add(minusButton);
         speedPanel.add(speedTextField);
         speedPanel.add(plusButton);
         
-        restartButton = createButton(150,40, "Restart", red, white,white, 16,1, null);
+        restartButton = createButton(150,40, "Restart", red, white,white, 16,1, this);
         
         footer.add(speedPanel);
         footer.add(restartButton);
@@ -187,12 +187,14 @@ public class PageSimulator extends Panels implements ActionListener{
         // disable buttons
         pdfButton.setEnabled(false);
         imgButton.setEnabled(false);
-        restartButton.setEnabled(false);
+        restartButton.setText("Stop");
         plusButton.setEnabled(false);
         minusButton.setEnabled(false);
         
-        int simulationSpeed = draw.speed;
+        //int simulationSpeed = draw.speed;
+        int simulationSpeed = Integer.parseInt(speedTextField.getText());
         speedTextField.setText(String.valueOf(simulationSpeed));
+        draw.speed = simulationSpeed;
         
         // for debugging
         System.out.println(simulationSpeed);
@@ -270,6 +272,20 @@ public class PageSimulator extends Panels implements ActionListener{
 
         document.close();
     }
+    
+    public void stopCurrentSimulation() {
+        if(currentSimulator instanceof FIFO fifo) {
+            fifo.stopSimulation();
+        } else if (currentSimulator instanceof LRU lru) {
+            lru.stopSimulation();
+        } else if (currentSimulator instanceof Optimal opt) {
+            opt.stopSimulation();
+        } else if (currentSimulator instanceof LFU lfu) {
+            lfu.stopSimulation();
+        } else if (currentSimulator instanceof MFU mfu) {
+            mfu.stopSimulation();
+        }
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -295,6 +311,68 @@ public class PageSimulator extends Panels implements ActionListener{
                 JOptionPane.showMessageDialog(this, "File successfully saved as " + timestamp + "_PG.pdf", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception ex) {
                ex.printStackTrace();
+            }
+        }
+        
+        else if (e.getSource() == restartButton) {
+            if (restartButton.getText().equals("Stop")) {
+                System.out.println("Stop Simulation!"); // for debugging
+                stopCurrentSimulation();
+                restartButton.setText("Restart");
+                
+                // enable buttons
+                pdfButton.setEnabled(true);
+                imgButton.setEnabled(true);
+                restartButton.setText("Restart");
+                plusButton.setEnabled(true);
+                minusButton.setEnabled(true);
+            } else if (restartButton.getText().equals("Restart")) {
+                startSimulation(simulator.getAlgorithm());
+                if (currentSimulator instanceof FIFO fifo) {
+                    fifo.restartSimulation();
+                } else if (currentSimulator instanceof LRU lru) {
+                    lru.restartSimulation();
+                } else if (currentSimulator instanceof Optimal opt) {
+                    opt.restartSimulation();
+                } else if (currentSimulator instanceof LFU lfu) {
+                    lfu.restartSimulation();
+                } else if (currentSimulator instanceof MFU mfu) {
+                    mfu.restartSimulation();
+                }
+                // for debugging
+                System.out.println(simulator.getPages());
+                System.out.println("Restart Simulation!"); // for debugging
+                System.out.println(simulator.getAlgorithm()); // for debugging
+            }
+        }
+        
+        else if (e.getSource() == plusButton) {
+            int speed = Integer.parseInt(speedTextField.getText());
+            if (speed < 2000) {
+                if (speed == 100) {
+                    speed += 150;
+                } else if (speed + 250 > 2000) {
+                    speed = 2000;
+                } else {
+                    speed += 250;
+                }
+                speedTextField.setText(String.valueOf(speed));
+            }
+        }
+        
+        else if (e.getSource() == minusButton) {
+            int speed = Integer.parseInt(speedTextField.getText());
+            if (speed > 100) {
+                if (speed == 250) {
+                    speed -= 150;
+                } else{
+                    speed -= 250;
+                }
+                
+                if (speed < 100) {
+                    speed = 100;
+                }
+                speedTextField.setText(String.valueOf(speed));
             }
         }
     }

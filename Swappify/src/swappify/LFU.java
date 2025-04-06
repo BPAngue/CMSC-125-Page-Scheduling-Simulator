@@ -13,21 +13,24 @@ import javax.swing.Timer;
 
 public class LFU {
     
+    // constructor set variables
+    public ArrayList<Integer> referenceStringValues;
     public ArrayList<Integer> pageFrames;
     public ArrayList<Integer> pageNumberLabel;
     public ArrayList<String> hitMissLabel;
+    public int numFrames = 0;
+    public int pageFaults;
+    public Draw draw;
     public ArrayList<ArrayList<Integer>> pageFramesPerColumn;
+    public JLabel timerLabel;
+    public JButton pdfButton, imgButton, restartButton, plusButton, minusButton;
+    
+    // local variables 
     public Map<Integer, Integer> pageFrequency = new HashMap<>();
     public LinkedHashSet<Integer> insertionOrder = new LinkedHashSet<>();
-    public ArrayList<Integer> referenceStringValues;
     public String referenceString;
-    public JButton pdfButton, imgButton, restartButton, plusButton, minusButton;
     public Timer timer;
     public int time;
-    public int pageFaults;
-    public int numFrames = 0;
-    public Draw draw;
-    public JLabel timerLabel;
     public int seconds = 1;
     public int minutes = 0;
     
@@ -52,6 +55,10 @@ public class LFU {
     }
     
     public void startSimulation(int simulationSpeed) {
+        // for debugging
+        for (int number : referenceStringValues) {
+            System.out.println(number);
+        }
         timer = new Timer(simulationSpeed, new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -67,14 +74,14 @@ public class LFU {
                     pageNumberLabel.add(page);
                     
                     // for debugging
-                    System.out.println("Time " + time + ": Processing page " + page); 
-                    System.out.println("Page Frequencies: " + pageFrequency);
-                    System.out.println("Page Insertion Order: " + insertionOrder);
+                    // System.out.println("Time " + time + ": Processing page " + page); 
+                    // System.out.println("Page Frequencies: " + pageFrequency);
+                    // System.out.println("Page Insertion Order: " + insertionOrder);
                     
                     // check if the page is already in the frame
                     if (!pageFrames.contains(page)) {
                         pageFaults++;
-                        System.out.println("Page fault! Page " + page + " not in frames."); // for debugging
+                        // System.out.println("Page fault! Page " + page + " not in frames."); // for debugging
                         
                         // if frames are full, remove the least frequently used page but replace it in the same position
                         if (pageFrames.size() == numFrames) {
@@ -85,7 +92,7 @@ public class LFU {
                             insertionOrder.add(page);
                             pageFrequency.remove(pageToRemove);
                             recordSnapShot();
-                            System.out.println("Removed page: " + pageToRemove); // for debugging
+                            // System.out.println("Removed page: " + pageToRemove); // for debugging
                         } else {
                             // Add page normally if there's still space
                             pageFrames.add(page);
@@ -95,7 +102,7 @@ public class LFU {
                         hitMissLabel.add("Miss");
                         draw.totalPageFault = pageFaults;
                     } else {
-                        System.out.println("Page hit! Page " + page + " already in frames."); // for debugging
+                        // System.out.println("Page hit! Page " + page + " already in frames."); // for debugging
                         hitMissLabel.add("Hit");
                         recordSnapShot();
                         draw.totalPageFault = pageFaults;
@@ -111,6 +118,13 @@ public class LFU {
                     draw.nextStep();
                     draw.totalPageFault = pageFaults;
                     
+                    // enable buttons
+                    pdfButton.setEnabled(true);
+                    imgButton.setEnabled(true);
+                    restartButton.setText("Restart");
+                    plusButton.setEnabled(true);
+                    minusButton.setEnabled(true);
+                    
                     // for debugging
                     System.out.println("\nSimulation Complete!");
                     System.out.println("Total Page Faults: " + pageFaults);
@@ -124,13 +138,13 @@ public class LFU {
         draw.repaint();
         draw.nextStep();
         
-        // for debugging
+        /*// for debugging
 	System.out.print("Current Frames: ");
 	for (int frame : pageFrames) {
             System.out.print(frame + " ");
         }
 	System.out.println();
-	System.out.println();
+	System.out.println();*/
     }
     
     public void recordSnapShot() {
@@ -145,7 +159,7 @@ public class LFU {
         pageFramesPerColumn.add(snapshot);
         
         // for debugging
-        System.out.println("Snapshot: " + pageFramesPerColumn);
+        // System.out.println("Snapshot: " + pageFramesPerColumn);
     }
     
     public int findLFUPage() {
@@ -173,5 +187,33 @@ public class LFU {
         
         // fallback
         return candidates.get(0);
+    }
+    
+    public void stopSimulation() {
+        if (timer != null && timer.isRunning()) {
+            timer.stop();
+            //System.out.println("Simulation stopped!"); // for debugging
+        }
+    }
+    
+    public void restartSimulation() {
+        // clear local values
+        pageFrequency.clear();
+        insertionOrder.clear();
+        time = 0;
+        seconds = 1;
+        minutes = 0;
+            
+        // clear all frame and label data
+        pageFrames.clear();
+        pageNumberLabel.clear();
+        hitMissLabel.clear();
+        pageFramesPerColumn.clear();
+            
+        // clear draw Panel
+        draw.clearValues();
+        draw.removeAll();
+        draw.revalidate();
+        draw.repaint();
     }
 }

@@ -13,20 +13,23 @@ import javax.swing.Timer;
 
 public class LRU {
     
+    // constructor set variables
+    public ArrayList<Integer> referenceStringValues;
     public ArrayList<Integer> pageFrames;
     public ArrayList<Integer> pageNumberLabel;
     public ArrayList<String> hitMissLabel;
+    public int numFrames = 0;
+    public int pageFaults;
+    public Draw draw;
     public ArrayList<ArrayList<Integer>> pageFramesPerColumn;
-    public static LinkedHashMap<Integer, Integer> pageMap = new LinkedHashMap<>();
-    public ArrayList<Integer> referenceStringValues;
-    public String referenceString;
+    public JLabel timerLabel;
     public JButton pdfButton, imgButton, restartButton, plusButton, minusButton;
+    
+    // local variables
+    public static LinkedHashMap<Integer, Integer> pageMap = new LinkedHashMap<>();
+    public String referenceString;
     public Timer timer;
     public int time;
-    public int pageFaults;
-    public int numFrames = 0;
-    public Draw draw;
-    public JLabel timerLabel;
     public int seconds = 1;
     public int minutes = 0;
     
@@ -64,12 +67,12 @@ public class LRU {
                     
                     int page = referenceStringValues.get(time);
                     pageNumberLabel.add(page);
-                    System.out.println("Time " + time + ": Processing page " + page); // for debugging
+                    // System.out.println("Time " + time + ": Processing page " + page); // for debugging
                     
                     // check if the page is already in the frame
                     if (!pageFrames.contains(page)) {
                         pageFaults++;
-                        System.out.println("Page fault! Page " + page + " not in frames."); // for debugging
+                        // System.out.println("Page fault! Page " + page + " not in frames."); // for debugging
                         
                         // if frames are full, find the least recently used page to replace
                         if (pageFrames.size() == numFrames) {
@@ -78,7 +81,7 @@ public class LRU {
                             pageFrames.set(indexToReplace, page);
                             pageMap.remove(removedPage);
                             recordSnapShot();
-                            System.out.println("Removed page: " + removedPage); // for debugging
+                            // System.out.println("Removed page: " + removedPage); // for debugging
                         } else {
                             // Add page normally if there's still space
                             pageFrames.add(page);
@@ -88,7 +91,7 @@ public class LRU {
                         hitMissLabel.add("Miss");
                         draw.totalPageFault = pageFaults;
                     } else {
-                        System.out.println("Page hit! Page " + page + " already in frames."); // for debugging
+                        // System.out.println("Page hit! Page " + page + " already in frames."); // for debugging
                         hitMissLabel.add("Hit");
                         recordSnapShot();
                         draw.totalPageFault = pageFaults;
@@ -107,6 +110,13 @@ public class LRU {
                     draw.nextStep();
                     draw.totalPageFault = pageFaults;
                     
+                    // enable buttons
+                    pdfButton.setEnabled(true);
+                    imgButton.setEnabled(true);
+                    restartButton.setText("Restart");
+                    plusButton.setEnabled(true);
+                    minusButton.setEnabled(true);
+                    
                     // for debugging
                     System.out.println("\nSimulation Complete!");
                     System.out.println("Total Page Faults: " + pageFaults);
@@ -120,13 +130,13 @@ public class LRU {
         draw.repaint();
         draw.nextStep();
         
-        // for debugging
+        /*// for debugging
 	System.out.print("Current Frames: ");
 	for (int frame : pageFrames) {
             System.out.print(frame + " ");
         }
 	System.out.println();
-	System.out.println();
+	System.out.println();*/
     }
     
     public void recordSnapShot() {
@@ -141,11 +151,38 @@ public class LRU {
         pageFramesPerColumn.add(snapshot);
         
         // for debugging
-        System.out.println("Snapshot: " + pageFramesPerColumn);
+        // System.out.println("Snapshot: " + pageFramesPerColumn);
     }
     
     public int findLRUReplacementIndex() {
         int lruPage = Collections.min(pageMap.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey();
         return pageFrames.indexOf(lruPage);
+    }
+    
+    public void stopSimulation() {
+        if (timer != null && timer.isRunning()) {
+            timer.stop();
+            // System.out.println("Simulation stopped!"); // for debugging
+        }
+    }
+    
+    public void restartSimulation() {
+        // clear local values
+        pageMap.clear();
+        time = 0;
+        seconds = 1;
+        minutes = 0;
+            
+        // clear all frame and label data
+        pageFrames.clear();
+        pageNumberLabel.clear();
+        hitMissLabel.clear();
+        pageFramesPerColumn.clear();
+            
+        // clear draw Panel
+        draw.clearValues();
+        draw.removeAll();
+        draw.revalidate();
+        draw.repaint();
     }
 }

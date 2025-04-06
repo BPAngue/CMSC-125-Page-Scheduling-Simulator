@@ -13,21 +13,24 @@ import javax.swing.Timer;
 
 public class FIFO {
     
+    // constructor set variables
+    public ArrayList<Integer> referenceStringValues;
     public ArrayList<Integer> pageFrames;
     public ArrayList<Integer> pageNumberLabel;
     public ArrayList<String> hitMissLabel;
+    public int numFrames = 0;
+    public int pageFaults;
+    public Draw draw;
     public ArrayList<ArrayList<Integer>> pageFramesPerColumn;
+    public JLabel timerLabel;
+    public JButton pdfButton, imgButton, restartButton, plusButton, minusButton;
+    
+    // local variables 
     public Queue<Integer> queue = new LinkedList<>();
     public Set<Integer> pageSet = new HashSet<>();
-    public ArrayList<Integer> referenceStringValues;
     public String referenceString;
-    public JButton pdfButton, imgButton, restartButton, plusButton, minusButton;
     public Timer timer;
     public int time;
-    public int pageFaults;
-    public int numFrames = 0;
-    public Draw draw;
-    public JLabel timerLabel;
     public int seconds = 1;
     public int minutes = 0;
     
@@ -65,12 +68,12 @@ public class FIFO {
                     
                     int page = referenceStringValues.get(time);
                     pageNumberLabel.add(page);
-                    System.out.println("Time " + time + ": Processing page " + page); // for debugging
+                    //System.out.println("Time " + time + ": Processing page " + page); // for debugging
                     
                     // check if the page is already in the frame
                     if (!pageSet.contains(page)) {
                         pageFaults++;
-                        System.out.println("Page fault! Page " + page + " not in frames."); // for debugging
+                        //System.out.println("Page fault! Page " + page + " not in frames."); // for debugging
                         
                         // if frames are full, remove the oldest page but replace it in the same position
                         if (pageFrames.size() == numFrames) {
@@ -80,7 +83,7 @@ public class FIFO {
                             pageFrames.set(indexToReplace, page); // Replace the page in the same position
                             queue.add(page);
                             recordSnapShot();
-                            System.out.println("Removed page: " + removedPage); // for debugging
+                            //System.out.println("Removed page: " + removedPage); // for debugging
                         } else {
                             // Add page normally if there's still space
                             pageFrames.add(page);
@@ -93,7 +96,7 @@ public class FIFO {
                         hitMissLabel.add("Miss");
                         draw.totalPageFault = pageFaults;
                     } else {
-                        System.out.println("Page hit! Page " + page + " already in frames."); // for debugging
+                        //System.out.println("Page hit! Page " + page + " already in frames."); // for debugging
                         hitMissLabel.add("Hit");
                         recordSnapShot();
                         draw.totalPageFault = pageFaults;
@@ -111,7 +114,7 @@ public class FIFO {
                     // enable buttons
                     pdfButton.setEnabled(true);
                     imgButton.setEnabled(true);
-                    restartButton.setEnabled(true);
+                    restartButton.setText("Restart");
                     plusButton.setEnabled(true);
                     minusButton.setEnabled(true);
                     
@@ -128,13 +131,13 @@ public class FIFO {
         draw.repaint();
         draw.nextStep();
         
-        // for debugging
+        /*// for debugging
 	System.out.print("Current Frames: ");
 	for (int frame : pageFrames) {
             System.out.print(frame + " ");
         }
 	System.out.println();
-	System.out.println();
+	System.out.println();*/
     }
     
     public void recordSnapShot() {
@@ -149,6 +152,33 @@ public class FIFO {
         pageFramesPerColumn.add(snapshot);
         
         // for debugging
-        System.out.println("Snapshot: " + pageFramesPerColumn);
+        // System.out.println("Snapshot: " + pageFramesPerColumn);
+    }
+    
+    public void stopSimulation() {
+        if (timer != null && timer.isRunning()) {
+            timer.stop();
+        }
+    }
+    
+    public void restartSimulation() {
+        // clear local values
+        queue.clear();
+        pageSet.clear();
+        time = 0;
+        seconds = 1;
+        minutes = 0;
+            
+        // clear all frame and label data
+        pageFrames.clear();
+        pageNumberLabel.clear();
+        hitMissLabel.clear();
+        pageFramesPerColumn.clear();
+            
+        // clear draw Panel
+        draw.clearValues();
+        draw.removeAll();
+        draw.revalidate();
+        draw.repaint();
     }
 }

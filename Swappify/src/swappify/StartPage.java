@@ -16,6 +16,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 public class StartPage extends Panels implements ActionListener{
     
@@ -103,13 +105,14 @@ public class StartPage extends Panels implements ActionListener{
         algorithmField = createField(330, 40, darkgreen, 16f);
         algorithmField.setEditable(false);
         
-        framesLabel = createLabel(330, 40, white,  "Enter Number of Frames:", 16f);
+        framesLabel = createLabel(330, 40, white,  "<html>Enter Number of Frames<br> (3 ≤ fs ≤ 10) </html>", 16f);
         framesField = createField(330, 40, darkgreen, 16f);
         
-        lengthLabel = createLabel(330, 40, white,  "Reference Length:", 16f);
+        lengthLabel = createLabel(330, 40, white,  "<html>Reference Length<br> (rl ≥ 10): </html>", 16f);
         lengthField = createField(330, 40, darkgreen, 16f);
+        lengthField.setEditable(false);
         
-        rstringLabel = createLabel(330, 40, white,  "<html>Enter Reference String<br>(Separated by spaces):</html>", 16f);
+        rstringLabel = createLabel(330, 40, white,  "<html>Enter Reference String<br>(Separated by spaces [0 ≤ rs ≤ 20]):</html>", 16f);
         rstringField = createField(330, 40, darkgreen, 16f);
         
         outlinePanel.add(algorithmLabel);
@@ -147,6 +150,41 @@ public class StartPage extends Panels implements ActionListener{
         add(titlePanel);
         add(selectionPanel);
         add(errorLabel);
+        
+        addNumberCountingListener();
+    }
+    
+    public void addNumberCountingListener() {
+        rstringField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                countNumbers(rstringField);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                countNumbers(rstringField);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                countNumbers(rstringField);
+            }
+        });
+    }
+    
+    private void countNumbers(JTextField textField) {
+        String text = textField.getText().trim();
+        String[] numbers = text.split(" ");
+        
+        int count = 0;
+        for (String num : numbers) {
+            if (num.matches("\\d+")) {
+                count++;
+            }
+        }
+        
+        lengthField.setText(String.valueOf(count));
     }
 
     public void clearInputs(){
@@ -211,12 +249,17 @@ public class StartPage extends Panels implements ActionListener{
     }
      
     private void generateTextInput(){
-        if (uploadFile() != null) {
-            readFile(uploadFile());
-
-            framesField.setText(stringDetails.get(0));
-            lengthField.setText(stringDetails.get(1));
-            rstringField.setText(stringDetails.get(2));
+        File selectedFile = uploadFile();
+        if (selectedFile != null) {
+            readFile(selectedFile);
+            
+            if (!stringDetails.isEmpty()) {
+                framesField.setText(stringDetails.get(0));
+                lengthField.setText(stringDetails.get(1));
+                rstringField.setText(stringDetails.get(2));
+            } else {
+                System.out.println("No data found in file");
+            }
         }
     }
     
@@ -231,13 +274,27 @@ public class StartPage extends Panels implements ActionListener{
     
     private boolean validRefString(){
         String rstring = rstringField.getText();
-        int length = rstring.length();
         
-        for (int i=0; i<length; i++){
-            if(!(Character.isDigit(rstring.charAt(i)) || Character.isSpaceChar(rstring.charAt(i)))){
+        // check if the string contains only digits
+        if (!rstring.matches("[0-9 ]*")) {
+            return false;
+        }
+        
+        String[] num = rstring.split(" ");
+        for (String token : num) {
+            if (token.isEmpty()) {
+                return false;
+            }
+            try {
+                int number = Integer.parseInt(token);
+                if (number < 0 || number > 20) {
+                    return false;
+                }
+            } catch (NumberFormatException e) {
                 return false;
             }
         }
+
         return true;
     }
     

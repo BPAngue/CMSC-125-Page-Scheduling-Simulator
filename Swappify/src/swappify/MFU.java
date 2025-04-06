@@ -13,21 +13,24 @@ import javax.swing.Timer;
 
 public class MFU {
     
+    // constructor set variables
+    public ArrayList<Integer> referenceStringValues;
     public ArrayList<Integer> pageFrames;
     public ArrayList<Integer> pageNumberLabel;
     public ArrayList<String> hitMissLabel;
+    public int numFrames = 0;
+    public int pageFaults;
+    public Draw draw;
     public ArrayList<ArrayList<Integer>> pageFramesPerColumn;
+    public JLabel timerLabel;
+    public JButton pdfButton, imgButton, restartButton, plusButton, minusButton;
+    
+    // local variables 
     public Map<Integer, Integer> pageFrequency = new HashMap<>();
     public LinkedHashSet<Integer> insertionOrder = new LinkedHashSet<>();
-    public ArrayList<Integer> referenceStringValues;
     public String referenceString;
-    public JButton pdfButton, imgButton, restartButton, plusButton, minusButton;
     public Timer timer;
     public int time;
-    public int pageFaults;
-    public int numFrames = 0;
-    public Draw draw;
-    public JLabel timerLabel;
     public int seconds = 1;
     public int minutes = 0;
     
@@ -111,6 +114,13 @@ public class MFU {
                     draw.nextStep();
                     draw.totalPageFault = pageFaults;
                     
+                    // enable buttons
+                    pdfButton.setEnabled(true);
+                    imgButton.setEnabled(true);
+                    restartButton.setText("Restart");
+                    plusButton.setEnabled(true);
+                    minusButton.setEnabled(true);
+                    
                     // for debugging
                     System.out.println("\nSimulation Complete!");
                     System.out.println("Total Page Faults: " + pageFaults);
@@ -173,5 +183,33 @@ public class MFU {
         
         // fallback
         return candidates.get(0);
+    }
+    
+    public void stopSimulation() {
+        if (timer != null && timer.isRunning()) {
+            timer.stop();
+            // System.out.println("Simulation stopped!"); // for debugging
+        }
+    }
+    
+    public void restartSimulation() {
+        // clear local values
+        pageFrequency.clear();
+        insertionOrder.clear();
+        time = 0;
+        seconds = 1;
+        minutes = 0;
+            
+        // clear all frame and label data
+        pageFrames.clear();
+        pageNumberLabel.clear();
+        hitMissLabel.clear();
+        pageFramesPerColumn.clear();
+            
+        // clear draw Panel
+        draw.clearValues();
+        draw.removeAll();
+        draw.revalidate();
+        draw.repaint();
     }
 }
