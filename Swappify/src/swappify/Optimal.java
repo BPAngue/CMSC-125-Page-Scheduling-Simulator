@@ -9,7 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 
-public class Optimal {
+public class Optimal implements Runnable {
     
     // constructor set variables
     public ArrayList<Integer> referenceStringValues;
@@ -30,11 +30,12 @@ public class Optimal {
     public int time;
     public int seconds = 1;
     public int minutes = 0;
+    public int simulationSpeed;
     
     public Optimal(ArrayList<Integer> referenceStringValues, ArrayList<Integer> pageFrames, 
             ArrayList<Integer> pageNumberLabel, ArrayList<String> hitMissLabel, 
             int numFrames, int pageFaults, Draw draw, ArrayList<ArrayList<Integer>> pageFramesPerColumn, 
-            JLabel timerLabel, JButton pdfButton, JButton imgButton, JButton restartButton, JButton plusButton, JButton minusButton) {
+            JLabel timerLabel, JButton pdfButton, JButton imgButton, JButton restartButton, JButton plusButton, JButton minusButton, int simulationSpeed) {
         this.referenceStringValues = referenceStringValues;
         this.pageFrames = pageFrames;
         this.pageNumberLabel = pageNumberLabel;
@@ -49,9 +50,10 @@ public class Optimal {
         this.restartButton = restartButton;
         this.plusButton = plusButton;
         this.minusButton = minusButton;
+        this.simulationSpeed = simulationSpeed;
     }
     
-    public void startSimulation(int simulationSpeed) {
+    public void startSimulation() {
         timer = new Timer(simulationSpeed, new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -196,5 +198,10 @@ public class Optimal {
         draw.removeAll();
         draw.revalidate();
         draw.repaint();
+    }
+
+    @Override
+    public void run() {
+        startSimulation();
     }
 }

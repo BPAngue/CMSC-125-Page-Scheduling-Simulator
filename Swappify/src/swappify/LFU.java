@@ -11,7 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 
-public class LFU {
+public class LFU implements Runnable {
     
     // constructor set variables
     public ArrayList<Integer> referenceStringValues;
@@ -33,11 +33,12 @@ public class LFU {
     public int time;
     public int seconds = 1;
     public int minutes = 0;
+    public int simulationSpeed;
     
     public LFU(ArrayList<Integer> referenceStringValues, ArrayList<Integer> pageFrames,
             ArrayList<Integer> pageNumberLabel, ArrayList<String> hitMissLabel, 
             int numFrames, int pageFaults, Draw draw, ArrayList<ArrayList<Integer>> pageFramesPerColumn, 
-            JLabel timerLabel, JButton pdfButton, JButton imgButton, JButton restartButton, JButton plusButton, JButton minusButton) {
+            JLabel timerLabel, JButton pdfButton, JButton imgButton, JButton restartButton, JButton plusButton, JButton minusButton, int simulationSpeed) {
         this.referenceStringValues = referenceStringValues;
         this.pageFrames = pageFrames;
         this.pageNumberLabel = pageNumberLabel;
@@ -52,9 +53,10 @@ public class LFU {
         this.restartButton = restartButton;
         this.plusButton = plusButton;
         this.minusButton = minusButton;
+        this.simulationSpeed = simulationSpeed;
     }
     
-    public void startSimulation(int simulationSpeed) {
+    public void startSimulation() {
         // for debugging
         for (int number : referenceStringValues) {
             System.out.println(number);
@@ -215,5 +217,10 @@ public class LFU {
         draw.removeAll();
         draw.revalidate();
         draw.repaint();
+    }
+
+    @Override
+    public void run() {
+        startSimulation();
     }
 }

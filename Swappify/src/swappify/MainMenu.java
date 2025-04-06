@@ -189,10 +189,8 @@ public class MainMenu extends JPanel implements ActionListener{
         else if (e.getSource()==aboutButton){
             cardLayout.show(cardPanel, "ABOUT");
         }
-        else if (e.getSource()==startPanel.allButton ){
-            cardLayout.show(cardPanel, "ALL");
-        }
         else if (e.getSource()==startPanel.generateButton && startPanel.validateInput()){
+            // add values to simulator
             simulator.setAlgorithm(startPanel.algorithmField.getText());
             simulator.setNumberOfFrames(startPanel.framesField.getText());
             simulator.setReferenceLength(startPanel.lengthField.getText());
@@ -200,12 +198,26 @@ public class MainMenu extends JPanel implements ActionListener{
             for (String page : token) {
                 simulator.addPage(page);
             }
-            cardPanel.remove(simulatorPanel);
-            simulatorPanel = new PageSimulator(simulator);
-            simulatorPanel.backButton.addActionListener(this);
-            cardPanel.add(simulatorPanel, "SIMULATOR");
-            simulatorPanel.startSimulation(simulator.getAlgorithm());
-            cardLayout.show(cardPanel, "SIMULATOR");
+            
+            // check to see if the algorithm is set to ALL
+            if (simulator.getAlgorithm().equals("ALL")) {
+                System.out.println("ALL"); // for debugging
+                // simulate all
+                cardPanel.remove(allPanel);
+                allPanel = new PageSimulatorAll(simulator);
+                allPanel.backButton.addActionListener(this);
+                cardPanel.add(allPanel, "ALL");
+                cardLayout.show(cardPanel, "ALL");
+            } else {
+                System.out.println("Other algorithms"); // for debugging
+                // normal page simulator panel
+                cardPanel.remove(simulatorPanel);
+                simulatorPanel = new PageSimulator(simulator);
+                simulatorPanel.backButton.addActionListener(this);
+                cardPanel.add(simulatorPanel, "SIMULATOR");
+                simulatorPanel.startSimulation(simulator.getAlgorithm());
+                cardLayout.show(cardPanel, "SIMULATOR");
+            }  
         }
     }
 }

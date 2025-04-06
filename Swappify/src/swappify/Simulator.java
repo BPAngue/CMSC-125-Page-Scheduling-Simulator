@@ -9,6 +9,7 @@ public class Simulator {
     private String algorithm;
     private int frames, length;
     private int totalPageFault;
+    public int speed;
     
     public Simulator(){
     

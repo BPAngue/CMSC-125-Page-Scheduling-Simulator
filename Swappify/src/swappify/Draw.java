@@ -15,7 +15,6 @@ public class Draw extends JPanel {
     public int totalPageFault = 0;
     private int currentColumn = -1;
     private int horizontalSpacing = 20;
-    public int speed;
     
     Panels panels = new Panels();
     
@@ -128,7 +127,6 @@ public class Draw extends JPanel {
         g.setColor(panels.green);
         g.setFont(panels.archivoblack.deriveFont(16f));
         g.drawString("Total Page Faults: " + totalPageFault, horizontalMargin, panelHeight - 20);
-        System.out.println("Speed inside draw: " + speed); // for debugging
     }
     
     public void clearValues() {

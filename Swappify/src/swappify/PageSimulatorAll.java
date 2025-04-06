@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -36,13 +37,57 @@ public class PageSimulatorAll extends Panels implements ActionListener{
     private Simulator simulator;
     
     // for simulating
-    private Draw draw;
-    private ArrayList<Integer> pageNumberLabel = new ArrayList<>();
-    private ArrayList<Integer> pageFrames = new ArrayList<>();
-    private ArrayList<String> hitMissLabel = new ArrayList<>();
-    private ArrayList<ArrayList<Integer>> pageFramesPerColumn = new ArrayList<>();
-    private int totalPageFault;
-    private Object currentSimulator;
+    private Draw fifoDraw;
+    private Draw lruDraw;
+    private Draw optDraw;
+    private Draw scDraw;
+    private Draw escDraw;
+    private Draw lfuDraw;
+    private Draw mfuDraw;
+    private ArrayList<Integer> pageNumberLabelFifo = new ArrayList<>();
+    private ArrayList<Integer> pageNumberLabelLru = new ArrayList<>();
+    private ArrayList<Integer> pageNumberLabelOpt = new ArrayList<>();
+    private ArrayList<Integer> pageNumberLabelSc = new ArrayList<>();
+    private ArrayList<Integer> pageNumberLabelEsc = new ArrayList<>();
+    private ArrayList<Integer> pageNumberLabelLfu = new ArrayList<>();
+    private ArrayList<Integer> pageNumberLabelMfu = new ArrayList<>();
+    private ArrayList<Integer> pageFramesFifo = new ArrayList<>();
+    private ArrayList<Integer> pageFramesLru = new ArrayList<>();
+    private ArrayList<Integer> pageFramesOpt = new ArrayList<>();
+    private ArrayList<Integer> pageFramesSc = new ArrayList<>();
+    private ArrayList<Integer> pageFramesEsc = new ArrayList<>();
+    private ArrayList<Integer> pageFramesLfu = new ArrayList<>();
+    private ArrayList<Integer> pageFramesMfu = new ArrayList<>();
+    private ArrayList<String> hitMissLabelFifo = new ArrayList<>();
+    private ArrayList<String> hitMissLabelLru = new ArrayList<>();
+    private ArrayList<String> hitMissLabelOpt = new ArrayList<>();
+    private ArrayList<String> hitMissLabelSc = new ArrayList<>();
+    private ArrayList<String> hitMissLabelEsc = new ArrayList<>();
+    private ArrayList<String> hitMissLabelLfu = new ArrayList<>();
+    private ArrayList<String> hitMissLabelMfu = new ArrayList<>();
+    private ArrayList<ArrayList<Integer>> pageFramesPerColumnFifo = new ArrayList<>();
+    private ArrayList<ArrayList<Integer>> pageFramesPerColumnLru = new ArrayList<>();
+    private ArrayList<ArrayList<Integer>> pageFramesPerColumnOpt = new ArrayList<>();
+    private ArrayList<ArrayList<Integer>> pageFramesPerColumnSc = new ArrayList<>();
+    private ArrayList<ArrayList<Integer>> pageFramesPerColumnEsc = new ArrayList<>();
+    private ArrayList<ArrayList<Integer>> pageFramesPerColumnLfu = new ArrayList<>();
+    private ArrayList<ArrayList<Integer>> pageFramesPerColumnMfu = new ArrayList<>();
+    private int totalPageFaultFifo;
+    private int totalPageFaultLru;
+    private int totalPageFaultOpt;
+    private int totalPageFaultSc;
+    private int totalPageFaultEsc;
+    private int totalPageFaultLfu;
+    private int totalPageFaultMfu;
+    
+    // threads
+    private Thread fifoThread;
+    private Thread lruThread;
+    private Thread optThread;
+    private Thread scThread;
+    private Thread escThread;
+    private Thread lfuThread;
+    private Thread mfuThread;
     
     public PageSimulatorAll(Simulator simulator){
         this.simulator = simulator;
@@ -94,15 +139,23 @@ public class PageSimulatorAll extends Panels implements ActionListener{
         rightPanel.add(backButton);
         rightPanel.add(timerPanel);
         
-        // add frame panels //
+        // draw instances
+        fifoDraw = new Draw(simulator.getPages(), pageFramesPerColumnFifo, hitMissLabelFifo, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFaultFifo);
+        lruDraw = new Draw(simulator.getPages(), pageFramesPerColumnLru, hitMissLabelLru, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFaultLru);
+        optDraw = new Draw(simulator.getPages(), pageFramesPerColumnOpt, hitMissLabelOpt, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFaultOpt);
+        scDraw = new Draw(simulator.getPages(), pageFramesPerColumnSc, hitMissLabelSc, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFaultSc);
+        escDraw = new Draw(simulator.getPages(), pageFramesPerColumnEsc, hitMissLabelEsc, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFaultEsc);
+        lfuDraw = new Draw(simulator.getPages(), pageFramesPerColumnLfu, hitMissLabelLfu, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFaultLfu);
+        mfuDraw = new Draw(simulator.getPages(), pageFramesPerColumnMfu, hitMissLabelMfu, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFaultMfu);
         
-        fifoPanel = addFramePanel(simulator, draw);
-        lruPanel = addFramePanel(simulator, draw);
-        optPanel = addFramePanel(simulator, draw);
-        scPanel = addFramePanel(simulator, draw);
-        escPanel = addFramePanel(simulator, draw);
-        lfuPanel = addFramePanel(simulator, draw);
-        mfuPanel = addFramePanel(simulator, draw);
+        // add frame panels //
+        fifoPanel = addFramePanel(simulator, fifoDraw);
+        lruPanel = addFramePanel(simulator, lruDraw);
+        optPanel = addFramePanel(simulator, optDraw);
+        scPanel = addFramePanel(simulator, scDraw);
+        escPanel = addFramePanel(simulator, escDraw);
+        lfuPanel = addFramePanel(simulator, lfuDraw);
+        mfuPanel = addFramePanel(simulator, mfuDraw);
         
         tabbedPane = new JTabbedPane();
         tabbedPane.setPreferredSize(new Dimension(1480, 500));
@@ -141,161 +194,165 @@ public class PageSimulatorAll extends Panels implements ActionListener{
         plusButton = createButton(60,40, "+", green, white, white, 20, 1, this);
         speedTextField = createField(200, 40, darkgreen, 16);
         speedTextField.setEditable(false);
-        speedTextField.setText("SPEED");
+        speedTextField.setText("1000");
         speedTextField.setHorizontalAlignment(center);
         
         speedPanel.add(minusButton);
         speedPanel.add(speedTextField);
         speedPanel.add(plusButton);
         
-        restartButton = createButton(150,40, "Restart", red, white,white, 16,1, null);
+        restartButton = createButton(150,40, "Restart", red, white,white, 16,1, this);
         
         footer.add(speedPanel);
         footer.add(restartButton);
         
-        
         add(header);
         add(tabbedPane);
-        //add(framePanel);
         add(footer);
         
+        startSimulation();
     }
     
-    public void startSimulation(String algorithm) {
+    public void startSimulation() {
         // disable buttons
         pdfButton.setEnabled(false);
         imgButton.setEnabled(false);
-        restartButton.setEnabled(false);
+        restartButton.setText("Stop");
         plusButton.setEnabled(false);
         minusButton.setEnabled(false);
         
-        int simulationSpeed = draw.speed;
+        int simulationSpeed = Integer.parseInt(speedTextField.getText());
         speedTextField.setText(String.valueOf(simulationSpeed));
+        simulator.speed = simulationSpeed;
         
-        // for debugging
-        System.out.println(simulationSpeed);
-        switch(algorithm) {
-            case "FIFO":
-                currentSimulator = new FIFO(simulator.getPages(), pageFrames, pageNumberLabel, 
-                        hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, 
-                        pageFramesPerColumn, timerLabel, pdfButton, imgButton, restartButton, 
-                        plusButton, minusButton);
-                ((FIFO) currentSimulator).startSimulation(simulationSpeed);
-                break;
-            case "LRU":
-                currentSimulator = new LRU(simulator.getPages(), pageFrames, pageNumberLabel, 
-                        hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, 
-                        pageFramesPerColumn, timerLabel, pdfButton, imgButton, restartButton, 
-                        plusButton, minusButton);
-                ((LRU) currentSimulator).startSimulation(simulationSpeed);
-                break;
-            case "OPT":
-                currentSimulator = new Optimal(simulator.getPages(), pageFrames, pageNumberLabel, 
-                        hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, 
-                        pageFramesPerColumn, timerLabel, pdfButton, imgButton, restartButton, 
-                        plusButton, minusButton);
-                ((Optimal) currentSimulator).startSimulation(simulationSpeed);
-                break;
-            case "LFU":
-                currentSimulator = new LFU(simulator.getPages(), pageFrames, pageNumberLabel, 
-                        hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, 
-                        pageFramesPerColumn, timerLabel, pdfButton, imgButton, restartButton, 
-                        plusButton, minusButton);
-                ((LFU) currentSimulator).startSimulation(simulationSpeed);
-                break;
-            case "MFU":
-                currentSimulator = new MFU(simulator.getPages(), pageFrames, pageNumberLabel, 
-                        hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, 
-                        pageFramesPerColumn, timerLabel, pdfButton, imgButton, restartButton, 
-                        plusButton, minusButton);
-                ((MFU) currentSimulator).startSimulation(simulationSpeed);
-                break;
-               
-        }
+        // i want to simultaneously start all of the simulation classes here
+        // call all of the simulator classes
+        fifoThread = new Thread(new FIFO(simulator.getPages(), pageFramesFifo, pageNumberLabelFifo, 
+                hitMissLabelFifo, simulator.getNumberOfFrames(), totalPageFaultFifo, fifoDraw, 
+                pageFramesPerColumnFifo, timerLabel, pdfButton, imgButton, restartButton, 
+                plusButton, minusButton, simulationSpeed));
+        lruThread = new Thread (new LRU(simulator.getPages(), pageFramesLru, pageNumberLabelLru, 
+                hitMissLabelLru, simulator.getNumberOfFrames(), totalPageFaultLru, lruDraw, 
+                pageFramesPerColumnLru, timerLabel, pdfButton, imgButton, restartButton, 
+                plusButton, minusButton, simulationSpeed));
+        optThread = new Thread (new Optimal(simulator.getPages(), pageFramesOpt, pageNumberLabelOpt, 
+                hitMissLabelOpt, simulator.getNumberOfFrames(), totalPageFaultOpt, optDraw, 
+                pageFramesPerColumnOpt, timerLabel, pdfButton, imgButton, restartButton, 
+                plusButton, minusButton, simulationSpeed));
+        scThread = new Thread (new SecondChance(simulator.getPages(), pageFramesSc, pageNumberLabelSc, 
+                hitMissLabelSc, simulator.getNumberOfFrames(), totalPageFaultSc, scDraw, 
+                pageFramesPerColumnSc, timerLabel, pdfButton, imgButton, restartButton, 
+                plusButton, minusButton, simulationSpeed));
+        lfuThread = new Thread (new LFU(simulator.getPages(), pageFramesLfu, pageNumberLabelLfu, 
+                hitMissLabelLfu, simulator.getNumberOfFrames(), totalPageFaultLfu, lfuDraw, 
+                pageFramesPerColumnLfu, timerLabel, pdfButton, imgButton, restartButton, 
+                plusButton, minusButton, simulationSpeed));
+        mfuThread = new Thread (new MFU(simulator.getPages(), pageFramesMfu, pageNumberLabelMfu, 
+                hitMissLabelMfu, simulator.getNumberOfFrames(), totalPageFaultMfu, mfuDraw, 
+                pageFramesPerColumnMfu, timerLabel, pdfButton, imgButton, restartButton, 
+                plusButton, minusButton, simulationSpeed));
+        
+        // start threads
+        fifoThread.start();
+        lruThread.start();
+        optThread.start();
+        scThread.start();
+        lfuThread.start();
+        mfuThread.start();
     }
     
-
     public void saveTabbedPaneAsPNG() throws Exception {
         if (tabbedPane == null || tabbedPane.getTabCount() == 0) {
             throw new Exception("TabbedPane is empty or null.");
         }
 
-        // Use a fixed output directory called "screenshots"
-        File dir = new File("screenshots");
-        if (!dir.exists()) dir.mkdirs();
+        // Calculate total height required for the combined image
+        int totalHeight = 0;
+        int width = this.getWidth();
 
-        SimpleDateFormat formatter = new SimpleDateFormat("MMddyy_HHmmss");
-
+        // Get the height of each tab by capturing its image
+        ArrayList<BufferedImage> tabImages = new ArrayList<>();
         for (int i = 0; i < tabbedPane.getTabCount(); i++) {
             tabbedPane.setSelectedIndex(i); // Activate the tab
-
-            // Refresh GUI
             tabbedPane.revalidate();
             tabbedPane.repaint();
-            Thread.sleep(100); // give time to render
 
-            // Capture entire frame
+            BufferedImage tabImage = new BufferedImage(width, this.getHeight(), BufferedImage.TYPE_INT_RGB);
+            Graphics2D g2 = tabImage.createGraphics();
+            this.paint(g2);
+            g2.dispose();
+
+            tabImages.add(tabImage);
+            totalHeight += tabImage.getHeight(); // Add height of this tab to total height
+        }
+
+        // Create a new image with the combined height
+        BufferedImage combinedImage = new BufferedImage(width, totalHeight, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2 = combinedImage.createGraphics();
+
+        // Draw each tab's image onto the combined image
+        int yOffset = 0;
+        for (BufferedImage tabImage : tabImages) {
+            g2.drawImage(tabImage, 0, yOffset, null);
+            yOffset += tabImage.getHeight(); // Move the yOffset down by the height of the current tab
+        }
+        g2.dispose();
+
+        // Save the combined image as a PNG
+        File dir = new File("screenshots");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        SimpleDateFormat formatter = new SimpleDateFormat("MMddyy_HHmmss");
+        String timestamp = formatter.format(new Date());
+        File outputFile = new File(dir, timestamp + "_PG.png");
+
+        ImageIO.write(combinedImage, "png", outputFile);
+    }
+
+    public void saveTabbedPaneAsPDF() throws Exception {
+        if (tabbedPane == null || tabbedPane.getTabCount() == 0) {
+            throw new Exception("JTabbedPane is empty or null!");
+        }
+
+        // Create screenshots directory if it doesn't exist
+        File dir = new File("screenshots");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        // Generate filename with timestamp
+        SimpleDateFormat formatter = new SimpleDateFormat("MMddyy_HHmmss");
+        String timestamp = formatter.format(new Date());
+        String filename = timestamp + "_PG.pdf";
+        File outputFile = new File(dir, filename);
+
+        // Create PDF document
+        Document document = new Document(new com.itextpdf.text.Rectangle(this.getWidth(), this.getHeight()));
+        PdfWriter.getInstance(document, new FileOutputStream(outputFile));
+        document.open();
+
+        for (int i = 0; i < tabbedPane.getTabCount(); i++) {
+            tabbedPane.setSelectedIndex(i);
+
             BufferedImage image = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
             Graphics2D g2 = image.createGraphics();
             this.paint(g2);
             g2.dispose();
 
-            // Build filename
-            String timestamp = formatter.format(new Date());
-            File outputFile = new File(dir, timestamp + ".png");
+            Image pdfImage = Image.getInstance(image, null);
+            pdfImage.setAbsolutePosition(0, 0);
+            pdfImage.scaleToFit(this.getWidth(), this.getHeight());
 
-            // Save image
-            ImageIO.write(image, "png", outputFile);
-
-            Thread.sleep(1000); // ensure different timestamps
-        }
-    }
-    
-    public void saveTabbedPaneAsPDF(String filePath) throws Exception {
-        if (tabbedPane == null || tabbedPane.getTabCount() == 0) {
-            throw new Exception("JTabbedPane is empty or null!");
-        }
-
-        // Create a PDF document
-        Document document = new Document(new com.itextpdf.text.Rectangle(this.getWidth(), this.getHeight()));
-        PdfWriter.getInstance(document, new FileOutputStream(filePath));
-        document.open();
-
-        // Iterate through all tabs
-        for (int i = 0; i < tabbedPane.getTabCount(); i++) {
-                tabbedPane.setSelectedIndex(i);
-                
-                tabbedPane.revalidate();
-                tabbedPane.repaint();
-                Thread.sleep(100);
-
-                // Capture the tab as an image
-                BufferedImage image = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
-                Graphics2D g2 = image.createGraphics();
-                this.paint(g2);
-                g2.dispose();
-
-                // Save to a temporary file
-                File tempFile = File.createTempFile("tab_" + i, ".png");
-                ImageIO.write(image, "png", tempFile);
-
-                // Convert to PDF image
-                Image pdfImage = Image.getInstance(tempFile.getAbsolutePath());
-                pdfImage.setAbsolutePosition(0, 0);
-                pdfImage.scaleToFit(this.getWidth(), this.getHeight());
-
-                // Add to PDF
-                document.newPage();
-                document.add(pdfImage);
-
-                // Delete temp file
-                tempFile.delete();
+            document.newPage();
+            document.add(pdfImage);
         }
 
         document.close();
     }
 
-    private JPanel addFramePanel(Simulator simulator, Draw draw){
+    private JPanel addFramePanel(Simulator simulator, Draw draw1){
         JPanel framePanel = new JPanel();
         framePanel.setPreferredSize(new Dimension(1480, 470));
         framePanel.setBackground(green);
@@ -310,10 +367,10 @@ public class PageSimulatorAll extends Panels implements ActionListener{
         
         JPanel pageRefPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         pageRefPanel.setBackground(green);
-        JLabel pageRefValuesTitle = new JLabel("Page reference: ");
-        pageRefValuesTitle.setFont(archivoblack.deriveFont(16f));
-        pageRefValuesTitle.setForeground(white);
-        pageRefPanel.add(pageRefValuesTitle);
+        JLabel titlePagRef = new JLabel("Page reference: ");
+        titlePagRef.setFont(archivoblack.deriveFont(16f));
+        titlePagRef.setForeground(white);
+        pageRefPanel.add(titlePagRef);
         
         int count = 0;
         for (int page : simulator.getPages()) {
@@ -322,20 +379,20 @@ public class PageSimulatorAll extends Panels implements ActionListener{
                 pageText += ",";
             }
             
-            JLabel pageRefValues = new JLabel(pageText);
-            pageRefValues.setFont(archivoblack.deriveFont(13f));
-            pageRefValues.setForeground(white);
-            pageRefPanel.add(pageRefValues);
+            JLabel valuesPageRef = new JLabel(pageText);
+            valuesPageRef.setFont(archivoblack.deriveFont(13f));
+            valuesPageRef.setForeground(white);
+            pageRefPanel.add(valuesPageRef);
             count++;
         }
         
         JPanel numPageFramePanel = new JPanel();
         numPageFramePanel.setBackground(green);
         
-        JLabel numPageFrameValue = new JLabel("No. of Page frame: " + simulator.getNumberOfFrames());
-        numPageFrameValue.setFont(archivoblack.deriveFont(16f));
-        numPageFrameValue.setForeground(white);
-        numPageFramePanel.add(numPageFrameValue);
+        JLabel valueNumPageFrame = new JLabel("No. of Page frame: " + simulator.getNumberOfFrames());
+        valueNumPageFrame.setFont(archivoblack.deriveFont(16f));
+        valueNumPageFrame.setForeground(white);
+        numPageFramePanel.add(valueNumPageFrame);
         
         infoPanel.add(pageRefPanel);
         infoPanel.add(numPageFramePanel);
@@ -346,13 +403,11 @@ public class PageSimulatorAll extends Panels implements ActionListener{
         numPageFramePanel.setPreferredSize(new Dimension(730, infoPanelHeight));
         
         // change this with the drawing panel
-        Draw draw1 = new Draw(simulator.getPages(), pageFramesPerColumn, hitMissLabel, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFault);
         draw1.setPreferredSize(new Dimension(1462, 434 - infoPanelHeight));
         draw1.setBackground(white);
         
         framePanel.add(infoPanel);
         framePanel.add(draw1);
-        
         
         return framePanel;
     }
@@ -373,12 +428,70 @@ public class PageSimulatorAll extends Panels implements ActionListener{
             String timestamp = sdf.format(new Date());
 
             try {
-                saveTabbedPaneAsPDF(timestamp + "_PG.pdf");
-                JOptionPane.showMessageDialog(this, "File successfully saved as " + timestamp + "_PG.pdf", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
+                saveTabbedPaneAsPDF();
+                JOptionPane.showMessageDialog(this, "PDF successfully saved to \\Swappify\\screenshots!", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception ex) {
                ex.printStackTrace();
             }
         }
+        
+        else if (e.getSource() == restartButton) {
+            if (restartButton.getText().equals("Stop")) {
+                System.out.println("Stop Simulation!"); // for debugging
+                stopCurrentSimulation();
+                restartButton.setText("Restart");
+                
+                // enable buttons
+                pdfButton.setEnabled(true);
+                imgButton.setEnabled(true);
+                restartButton.setText("Restart");
+                plusButton.setEnabled(true);
+                minusButton.setEnabled(true);
+            } else if (restartButton.getText().equals("Restart")) {
+                // for debugging
+                System.out.println(simulator.getPages());
+                System.out.println("Restart Simulation!"); // for debugging
+                System.out.println(simulator.getAlgorithm()); // for debugging
+            }
+        }
+        
+        else if (e.getSource() == plusButton) {
+            int speed = Integer.parseInt(speedTextField.getText());
+            if (speed < 2000) {
+                if (speed == 100) {
+                    speed += 150;
+                } else if (speed + 250 > 2000) {
+                    speed = 2000;
+                } else {
+                    speed += 250;
+                }
+                speedTextField.setText(String.valueOf(speed));
+            }
+        }
+        
+        else if (e.getSource() == minusButton) {
+            int speed = Integer.parseInt(speedTextField.getText());
+            if (speed > 100) {
+                if (speed == 250) {
+                    speed -= 150;
+                } else{
+                    speed -= 250;
+                }
+                
+                if (speed < 100) {
+                    speed = 100;
+                }
+                speedTextField.setText(String.valueOf(speed));
+            }
+        }
     }
     
+    public void stopCurrentSimulation() {
+        fifoThread.interrupt();
+        lruThread.interrupt();
+        optThread.interrupt();
+        scThread.interrupt();
+        lfuThread.interrupt();
+        mfuThread.interrupt();
+    }
 }

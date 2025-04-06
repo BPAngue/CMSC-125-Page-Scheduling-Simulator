@@ -193,82 +193,94 @@ public class PageSimulator extends Panels implements ActionListener{
         
         int simulationSpeed = Integer.parseInt(speedTextField.getText());
         speedTextField.setText(String.valueOf(simulationSpeed));
-        draw.speed = simulationSpeed;
+        simulator.speed = simulationSpeed;
         
-        // for debugging
-        System.out.println(simulationSpeed);
         switch(algorithm) {
             case "FIFO":
                 currentSimulator = new FIFO(simulator.getPages(), pageFrames, pageNumberLabel, 
                         hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, 
                         pageFramesPerColumn, timerLabel, pdfButton, imgButton, restartButton, 
-                        plusButton, minusButton);
-                ((FIFO) currentSimulator).startSimulation(simulationSpeed);
+                        plusButton, minusButton, simulationSpeed);
+                ((FIFO) currentSimulator).startSimulation();
                 break;
             case "LRU":
                 currentSimulator = new LRU(simulator.getPages(), pageFrames, pageNumberLabel, 
                         hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, 
                         pageFramesPerColumn, timerLabel, pdfButton, imgButton, restartButton, 
-                        plusButton, minusButton);
-                ((LRU) currentSimulator).startSimulation(simulationSpeed);
+                        plusButton, minusButton, simulationSpeed);
+                ((LRU) currentSimulator).startSimulation();
                 break;
             case "OPT":
                 currentSimulator = new Optimal(simulator.getPages(), pageFrames, pageNumberLabel, 
                         hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, 
                         pageFramesPerColumn, timerLabel, pdfButton, imgButton, restartButton, 
-                        plusButton, minusButton);
-                ((Optimal) currentSimulator).startSimulation(simulationSpeed);
+                        plusButton, minusButton, simulationSpeed);
+                ((Optimal) currentSimulator).startSimulation();
                 break;
             case "Second Chance":
                 currentSimulator = new SecondChance(simulator.getPages(), pageFrames, pageNumberLabel, 
                         hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, 
                         pageFramesPerColumn, timerLabel, pdfButton, imgButton, restartButton, 
-                        plusButton, minusButton);
-                ((SecondChance) currentSimulator).startSimulation(simulationSpeed);
+                        plusButton, minusButton, simulationSpeed);
+                ((SecondChance) currentSimulator).startSimulation();
                 break;
             case "LFU":
                 currentSimulator = new LFU(simulator.getPages(), pageFrames, pageNumberLabel, 
                         hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, 
                         pageFramesPerColumn, timerLabel, pdfButton, imgButton, restartButton, 
-                        plusButton, minusButton);
-                ((LFU) currentSimulator).startSimulation(simulationSpeed);
+                        plusButton, minusButton, simulationSpeed);
+                ((LFU) currentSimulator).startSimulation();
                 break;
             case "MFU":
                 currentSimulator = new MFU(simulator.getPages(), pageFrames, pageNumberLabel, 
                         hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, 
                         pageFramesPerColumn, timerLabel, pdfButton, imgButton, restartButton, 
-                        plusButton, minusButton);
-                ((MFU) currentSimulator).startSimulation(simulationSpeed);
+                        plusButton, minusButton, simulationSpeed);
+                ((MFU) currentSimulator).startSimulation();
                 break;
         }
     }
+    
+    private File makeScreenshotsDirectory() {
+        File dir = new File("screenshots");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        
+        return dir;
+    }
 
     private File saveAsPNG(String fileName) throws IOException {
-        // Capture the content of framePanel as an image
+        makeScreenshotsDirectory();
+        
+        // Capture panel as image
         BufferedImage image = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = image.createGraphics();
         this.printAll(g2d);
         g2d.dispose();
     
         // Save the image as a PNG file
-        File pngFile = new File(fileName + ".png");
+        File pngFile = new File("screenshots/" + fileName + ".png");
         ImageIO.write(image, "PNG", pngFile);
-        //System.out.println("Saved as PNG: " + pngFile.getAbsolutePath());
         
         return pngFile;
     }
     
-    public void savePanelAsPDF(String filePath) throws Exception {
+    public void savePanelAsPDF(String fileName) throws Exception {
+        makeScreenshotsDirectory();
+        
+        
         // Create a BufferedImage and paint the panel onto it
-
         BufferedImage image = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = image.createGraphics();
         this.printAll(g2d);
         g2d.dispose();
 
+        File pdfFile = new File("screenshots/" + fileName + ".pdf");
+        
         // Create PDF document
         Document document = new Document(new com.itextpdf.text.Rectangle(this.getWidth(), this.getHeight()));
-        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(filePath));
+        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
         document.open();
 
         PdfContentByte contentByte = writer.getDirectContent();
@@ -304,7 +316,7 @@ public class PageSimulator extends Panels implements ActionListener{
             String fileName = timestamp + "_PG";
             try {
                 File pngFile = saveAsPNG(fileName);
-                JOptionPane.showMessageDialog(this, "File successfully saved as " + pngFile.getAbsolutePath(), "Save Successful", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "PNG successfully saved to \\Swappify\\screenshots!", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
             } catch (IOException f) {
                 f.printStackTrace();
             }
@@ -313,10 +325,11 @@ public class PageSimulator extends Panels implements ActionListener{
         else if (e.getSource() == pdfButton) {
             SimpleDateFormat sdf = new SimpleDateFormat("MMddyy_HHmmss");
             String timestamp = sdf.format(new Date());
+            String fileName = timestamp + "_PG";
 
             try {
-                savePanelAsPDF(timestamp + "_PG.pdf");
-                JOptionPane.showMessageDialog(this, "File successfully saved as " + timestamp + "_PG.pdf", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
+                savePanelAsPDF(fileName);
+                JOptionPane.showMessageDialog(this, "PDF successfully saved to \\Swappify\\screenshots!", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception ex) {
                ex.printStackTrace();
             }
