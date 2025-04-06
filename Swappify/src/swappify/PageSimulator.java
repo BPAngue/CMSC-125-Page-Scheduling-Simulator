@@ -191,7 +191,6 @@ public class PageSimulator extends Panels implements ActionListener{
         plusButton.setEnabled(false);
         minusButton.setEnabled(false);
         
-        //int simulationSpeed = draw.speed;
         int simulationSpeed = Integer.parseInt(speedTextField.getText());
         speedTextField.setText(String.valueOf(simulationSpeed));
         draw.speed = simulationSpeed;
@@ -219,6 +218,13 @@ public class PageSimulator extends Panels implements ActionListener{
                         pageFramesPerColumn, timerLabel, pdfButton, imgButton, restartButton, 
                         plusButton, minusButton);
                 ((Optimal) currentSimulator).startSimulation(simulationSpeed);
+                break;
+            case "Second Chance":
+                currentSimulator = new SecondChance(simulator.getPages(), pageFrames, pageNumberLabel, 
+                        hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, 
+                        pageFramesPerColumn, timerLabel, pdfButton, imgButton, restartButton, 
+                        plusButton, minusButton);
+                ((SecondChance) currentSimulator).startSimulation(simulationSpeed);
                 break;
             case "LFU":
                 currentSimulator = new LFU(simulator.getPages(), pageFrames, pageNumberLabel, 
@@ -284,6 +290,8 @@ public class PageSimulator extends Panels implements ActionListener{
             lfu.stopSimulation();
         } else if (currentSimulator instanceof MFU mfu) {
             mfu.stopSimulation();
+        } else if (currentSimulator instanceof SecondChance sc) {
+            sc.stopSimulation();
         }
     }
 
@@ -338,6 +346,8 @@ public class PageSimulator extends Panels implements ActionListener{
                     lfu.restartSimulation();
                 } else if (currentSimulator instanceof MFU mfu) {
                     mfu.restartSimulation();
+                } else if (currentSimulator instanceof SecondChance sc) {
+                    sc.restartSimulation();
                 }
                 // for debugging
                 System.out.println(simulator.getPages());
@@ -376,5 +386,4 @@ public class PageSimulator extends Panels implements ActionListener{
             }
         }
     }
-    
 }
