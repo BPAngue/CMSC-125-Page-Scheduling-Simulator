@@ -75,15 +75,15 @@ public class MFU implements Runnable {
                     int page = referenceStringValues.get(time);
                     pageNumberLabel.add(page);
                     
-                    // for debugging
+                    /*// for debugging
                     System.out.println("Time " + time + ": Processing page " + page); 
                     System.out.println("Page Frequencies: " + pageFrequency);
-                    System.out.println("Page Insertion Order: " + insertionOrder);
+                    System.out.println("Page Insertion Order: " + insertionOrder);*/
                     
                     // check if the page is already in the frame
                     if (!pageFrames.contains(page)) {
                         pageFaults++;
-                        System.out.println("Page fault! Page " + page + " not in frames."); // for debugging
+                        // System.out.println("Page fault! Page " + page + " not in frames."); // for debugging
                         
                         // if frames are full, remove the least frequently used page but replace it in the same position
                         if (pageFrames.size() == numFrames) {
@@ -94,7 +94,7 @@ public class MFU implements Runnable {
                             insertionOrder.add(page);
                             pageFrequency.remove(pageToRemove);
                             recordSnapShot();
-                            System.out.println("Removed page: " + pageToRemove); // for debugging
+                            // System.out.println("Removed page: " + pageToRemove); // for debugging
                         } else {
                             // Add page normally if there's still space
                             pageFrames.add(page);
@@ -104,7 +104,7 @@ public class MFU implements Runnable {
                         hitMissLabel.add("Miss");
                         draw.totalPageFault = pageFaults;
                     } else {
-                        System.out.println("Page hit! Page " + page + " already in frames."); // for debugging
+                        // System.out.println("Page hit! Page " + page + " already in frames."); // for debugging
                         hitMissLabel.add("Hit");
                         recordSnapShot();
                         draw.totalPageFault = pageFaults;
@@ -127,9 +127,9 @@ public class MFU implements Runnable {
                     plusButton.setEnabled(true);
                     minusButton.setEnabled(true);
                     
-                    // for debugging
+                    /*// for debugging
                     System.out.println("\nSimulation Complete!");
-                    System.out.println("Total Page Faults: " + pageFaults);
+                    System.out.println("Total Page Faults: " + pageFaults);*/
                 }
             }
         });
@@ -140,13 +140,13 @@ public class MFU implements Runnable {
         draw.repaint();
         draw.nextStep();
         
-        // for debugging
+        /*// for debugging
 	System.out.print("Current Frames: ");
 	for (int frame : pageFrames) {
             System.out.print(frame + " ");
         }
 	System.out.println();
-	System.out.println();
+	System.out.println();*/
     }
     
     public void recordSnapShot() {
@@ -161,7 +161,7 @@ public class MFU implements Runnable {
         pageFramesPerColumn.add(snapshot);
         
         // for debugging
-        System.out.println("Snapshot: " + pageFramesPerColumn);
+        // System.out.println("Snapshot: " + pageFramesPerColumn);
     }
     
     public int findMFUPage() {

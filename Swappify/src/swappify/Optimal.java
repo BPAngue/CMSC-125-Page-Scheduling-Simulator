@@ -116,9 +116,9 @@ public class Optimal implements Runnable {
                     plusButton.setEnabled(true);
                     minusButton.setEnabled(true);
                     
-                    // for debugging
+                    /*// for debugging
                     System.out.println("\nSimulation Complete!");
-                    System.out.println("Total Page Faults: " + pageFaults);
+                    System.out.println("Total Page Faults: " + pageFaults);*/
                 }
             }
         });

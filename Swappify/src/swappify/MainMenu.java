@@ -201,7 +201,7 @@ public class MainMenu extends JPanel implements ActionListener{
             
             // check to see if the algorithm is set to ALL
             if (simulator.getAlgorithm().equals("ALL")) {
-                System.out.println("ALL"); // for debugging
+                // System.out.println("ALL"); // for debugging
                 // simulate all
                 cardPanel.remove(allPanel);
                 allPanel = new PageSimulatorAll(simulator);
@@ -209,7 +209,7 @@ public class MainMenu extends JPanel implements ActionListener{
                 cardPanel.add(allPanel, "ALL");
                 cardLayout.show(cardPanel, "ALL");
             } else {
-                System.out.println("Other algorithms"); // for debugging
+                // System.out.println("Other algorithms"); // for debugging
                 // normal page simulator panel
                 cardPanel.remove(simulatorPanel);
                 simulatorPanel = new PageSimulator(simulator);

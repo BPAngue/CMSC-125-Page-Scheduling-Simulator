@@ -143,7 +143,7 @@ public class PageSimulator extends Panels implements ActionListener{
         numPageFramePanel.setPreferredSize(new Dimension(730, infoPanelHeight));
         
         // change this with the drawing panel
-        draw = new Draw(simulator.getPages(), pageFramesPerColumn, hitMissLabel, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFault);
+        draw = new Draw(simulator.getPages(), pageFramesPerColumn, hitMissLabel, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFault, simulator.getAlgorithm());
         draw.setPreferredSize(new Dimension(1462, 434 - infoPanelHeight));
         draw.setBackground(white);
         
@@ -223,6 +223,13 @@ public class PageSimulator extends Panels implements ActionListener{
                         pageFramesPerColumn, timerLabel, pdfButton, imgButton, restartButton, 
                         plusButton, minusButton, simulationSpeed);
                 ((SecondChance) currentSimulator).startSimulation();
+                break;
+            case "Enhanced Second Chance":
+                currentSimulator = new EnhancedSecondChance(simulator.getPages(), pageFrames, pageNumberLabel, 
+                        hitMissLabel, simulator.getNumberOfFrames(), totalPageFault, draw, 
+                        pageFramesPerColumn, timerLabel, pdfButton, imgButton, restartButton, 
+                        plusButton, minusButton, simulationSpeed);
+                ((EnhancedSecondChance) currentSimulator).startSimulation();
                 break;
             case "LFU":
                 currentSimulator = new LFU(simulator.getPages(), pageFrames, pageNumberLabel, 
@@ -304,6 +311,8 @@ public class PageSimulator extends Panels implements ActionListener{
             mfu.stopSimulation();
         } else if (currentSimulator instanceof SecondChance sc) {
             sc.stopSimulation();
+        } else if (currentSimulator instanceof EnhancedSecondChance esc) {
+            esc.stopSimulation();
         }
     }
 
@@ -361,6 +370,8 @@ public class PageSimulator extends Panels implements ActionListener{
                     mfu.restartSimulation();
                 } else if (currentSimulator instanceof SecondChance sc) {
                     sc.restartSimulation();
+                } else if (currentSimulator instanceof EnhancedSecondChance esc) {
+                    esc.restartSimulation();
                 }
                 // for debugging
                 System.out.println(simulator.getPages());

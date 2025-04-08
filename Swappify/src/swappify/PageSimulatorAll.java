@@ -85,6 +85,7 @@ public class PageSimulatorAll extends Panels implements ActionListener{
     private LRU lru;
     private Optimal opt;
     private SecondChance sc;
+    private EnhancedSecondChance esc;
     private LFU lfu;
     private MFU mfu;
     
@@ -148,13 +149,13 @@ public class PageSimulatorAll extends Panels implements ActionListener{
         rightPanel.add(timerPanel);
         
         // draw instances
-        fifoDraw = new Draw(simulator.getPages(), pageFramesPerColumnFifo, hitMissLabelFifo, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFaultFifo);
-        lruDraw = new Draw(simulator.getPages(), pageFramesPerColumnLru, hitMissLabelLru, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFaultLru);
-        optDraw = new Draw(simulator.getPages(), pageFramesPerColumnOpt, hitMissLabelOpt, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFaultOpt);
-        scDraw = new Draw(simulator.getPages(), pageFramesPerColumnSc, hitMissLabelSc, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFaultSc);
-        escDraw = new Draw(simulator.getPages(), pageFramesPerColumnEsc, hitMissLabelEsc, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFaultEsc);
-        lfuDraw = new Draw(simulator.getPages(), pageFramesPerColumnLfu, hitMissLabelLfu, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFaultLfu);
-        mfuDraw = new Draw(simulator.getPages(), pageFramesPerColumnMfu, hitMissLabelMfu, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFaultMfu);
+        fifoDraw = new Draw(simulator.getPages(), pageFramesPerColumnFifo, hitMissLabelFifo, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFaultFifo, "FIFO");
+        lruDraw = new Draw(simulator.getPages(), pageFramesPerColumnLru, hitMissLabelLru, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFaultLru, "LRU");
+        optDraw = new Draw(simulator.getPages(), pageFramesPerColumnOpt, hitMissLabelOpt, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFaultOpt, "OPT");
+        scDraw = new Draw(simulator.getPages(), pageFramesPerColumnSc, hitMissLabelSc, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFaultSc, "Second Chance");
+        escDraw = new Draw(simulator.getPages(), pageFramesPerColumnEsc, hitMissLabelEsc, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFaultEsc, "Enhanced Second Chance");
+        lfuDraw = new Draw(simulator.getPages(), pageFramesPerColumnLfu, hitMissLabelLfu, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFaultLfu, "LFU");
+        mfuDraw = new Draw(simulator.getPages(), pageFramesPerColumnMfu, hitMissLabelMfu, simulator.getReferenceLength(), simulator.getNumberOfFrames(), totalPageFaultMfu, "MFU");
         
         // add frame panels //
         fifoPanel = addFramePanel(simulator, fifoDraw);
@@ -259,6 +260,12 @@ public class PageSimulatorAll extends Panels implements ActionListener{
                 plusButton, minusButton, simulationSpeed);
         scThread = new Thread(sc);
         
+        esc = new EnhancedSecondChance(simulator.getPages(), pageFramesEsc, pageNumberLabelEsc,
+                hitMissLabelEsc, simulator.getNumberOfFrames(), totalPageFaultEsc, escDraw, 
+                pageFramesPerColumnEsc, timerLabel, pdfButton, imgButton, restartButton,
+                plusButton, minusButton, simulationSpeed);
+        escThread = new Thread(esc);
+        
         lfu = new LFU(simulator.getPages(), pageFramesLfu, pageNumberLabelLfu, 
                 hitMissLabelLfu, simulator.getNumberOfFrames(), totalPageFaultLfu, lfuDraw, 
                 pageFramesPerColumnLfu, timerLabel, pdfButton, imgButton, restartButton, 
@@ -276,6 +283,7 @@ public class PageSimulatorAll extends Panels implements ActionListener{
         lruThread.start();
         optThread.start();
         scThread.start();
+        escThread.start();
         lfuThread.start();
         mfuThread.start();
     }
@@ -472,6 +480,7 @@ public class PageSimulatorAll extends Panels implements ActionListener{
                 lru.restartSimulation();
                 opt.restartSimulation();
                 sc.restartSimulation();
+                esc.restartSimulation();
                 lfu.restartSimulation();
                 mfu.restartSimulation();
                 // for debugging
@@ -517,6 +526,7 @@ public class PageSimulatorAll extends Panels implements ActionListener{
         lru.stopSimulation();
         opt.stopSimulation();
         sc.stopSimulation();
+        esc.stopSimulation();
         lfu.stopSimulation();
         mfu.stopSimulation();
     }

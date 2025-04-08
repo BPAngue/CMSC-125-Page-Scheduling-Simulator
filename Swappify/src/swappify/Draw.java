@@ -3,6 +3,8 @@ package swappify;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import javax.swing.JPanel;
 
@@ -15,16 +17,19 @@ public class Draw extends JPanel {
     public int totalPageFault = 0;
     private int currentColumn = -1;
     private int horizontalSpacing = 20;
+    private String algorithm = null;
+    private HashMap<Integer, Boolean> pageModification = new HashMap<>();
     
     Panels panels = new Panels();
     
-    public Draw(ArrayList<Integer> pageNumberLabel, ArrayList<ArrayList<Integer>> pageFramesPerColumn, ArrayList<String> hitMissLabel, int referenceStringLength, int numberOfPageFrames, int totalPageFault) {
+    public Draw(ArrayList<Integer> pageNumberLabel, ArrayList<ArrayList<Integer>> pageFramesPerColumn, ArrayList<String> hitMissLabel, int referenceStringLength, int numberOfPageFrames, int totalPageFault, String algorithm) {
         this.pageNumberLabel = pageNumberLabel;
         this.pageFramesPerColumn = pageFramesPerColumn;
         this.hitMissLabel = hitMissLabel;
         this.referenceStringLength = referenceStringLength;
         this.numberOfPageFrames = numberOfPageFrames;
         this.totalPageFault = totalPageFault;
+        this.algorithm = algorithm;
     }
 
     public void nextStep() {
@@ -81,7 +86,18 @@ public class Draw extends JPanel {
             if (pageNumberLabel != null && col < pageNumberLabel.size()) {
                 g.setColor(panels.green);
                 g.setFont(panels.archivoblack.deriveFont(13f));
-                g.drawString(String.valueOf(pageNumberLabel.get(col)), x + (boxWidth / 2) - 5, verticalMargin - 15);
+                if (algorithm.equals("Enhanced Second Chance")) {
+                    int page = pageNumberLabel.get(col);
+                    boolean isModified = pageModification.getOrDefault(page, false);
+                    
+                    if (isModified) {
+                        g.drawString(String.valueOf(pageNumberLabel.get(col)) + " M", x + (boxWidth / 2) - 10, verticalMargin - 15);
+                    } else {
+                        g.drawString(String.valueOf(pageNumberLabel.get(col)), x + (boxWidth / 2) - 5, verticalMargin - 15);
+                    }
+                } else {
+                    g.drawString(String.valueOf(pageNumberLabel.get(col)), x + (boxWidth / 2) - 5, verticalMargin - 15);
+                }
             }
 
             int y = verticalMargin;
@@ -100,7 +116,7 @@ public class Draw extends JPanel {
                                 if (pageNumberLabel != null && col < pageNumberLabel.size()) {
                                     if (Objects.equals(val, pageNumberLabel.get(col))) {
                                         g.setColor(panels.red);
-                                        System.out.println("number is colored red");
+                                        // System.out.println("number is colored red"); // for debugging
                                     }
                                 }
                             }
@@ -134,5 +150,10 @@ public class Draw extends JPanel {
         hitMissLabel.clear();
         totalPageFault = 0;
         currentColumn = -1;
+        pageModification.clear();
+    }
+    
+    public void setPageModification(int page, boolean modification) {
+        pageModification.put(page, modification);
     }
 }

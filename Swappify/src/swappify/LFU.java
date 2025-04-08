@@ -57,10 +57,10 @@ public class LFU implements Runnable {
     }
     
     public void startSimulation() {
-        // for debugging
+        /*// for debugging
         for (int number : referenceStringValues) {
             System.out.println(number);
-        }
+        }*/
         timer = new Timer(simulationSpeed, new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -131,9 +131,9 @@ public class LFU implements Runnable {
                     plusButton.setEnabled(true);
                     minusButton.setEnabled(true);
                     
-                    // for debugging
+                    /*// for debugging
                     System.out.println("\nSimulation Complete!");
-                    System.out.println("Total Page Faults: " + pageFaults);
+                    System.out.println("Total Page Faults: " + pageFaults);*/
                 }
             }
         });

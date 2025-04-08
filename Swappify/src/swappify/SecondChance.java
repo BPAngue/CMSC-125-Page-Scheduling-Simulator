@@ -72,12 +72,12 @@ public class SecondChance implements Runnable {
                     timerLabel.setText("Timer: " + timeValue);
                     
                     int page = referenceStringValues.get(time);
-                    System.out.println("Time " + time + ": Processing page " + page); // for debugging
+                    // System.out.println("Time " + time + ": Processing page " + page); // for debugging
                     
                     // check if the page is already in the frame
                     if (!pageFrames.contains(page)) {
                         pageFaults++;
-                        System.out.println("Page fault! Page " + page + " not in frames."); // for debugging
+                        // System.out.println("Page fault! Page " + page + " not in frames."); // for debugging
                         
                         // if frames are full, remove the oldest page but replace it in the same position
                         if (pageFrames.size() == numFrames) {
@@ -94,7 +94,7 @@ public class SecondChance implements Runnable {
                         hitMissLabel.add("Miss");
                         draw.totalPageFault = pageFaults;
                     } else {
-                        System.out.println("Page hit! Page " + page + " already in frames."); // for debugging
+                        // System.out.println("Page hit! Page " + page + " already in frames."); // for debugging
                         
                         // update reference bit of page
 			for (HashMap<Integer, Boolean> entry : queue) {
@@ -108,10 +108,10 @@ public class SecondChance implements Runnable {
                         recordSnapShot();
                         draw.totalPageFault = pageFaults;
                     }
-                    // for debugging
+                    /*// for debugging
                     for (HashMap<Integer, Boolean> entry : queue) {
 			System.out.println(entry);
-                    }
+                    }*/
                   
                     // display current state of the page frames
                     printPageFrames();		
@@ -129,9 +129,9 @@ public class SecondChance implements Runnable {
                     plusButton.setEnabled(true);
                     minusButton.setEnabled(true);
                     
-                    // for debugging
+                    /*// for debugging
                     System.out.println("\nSimulation Complete!");
-                    System.out.println("Total Page Faults: " + pageFaults);
+                    System.out.println("Total Page Faults: " + pageFaults);*/
                 }
             }
         });
@@ -142,13 +142,13 @@ public class SecondChance implements Runnable {
         draw.repaint();
         draw.nextStep();
         
-        // for debugging
+        /*// for debugging
 	System.out.print("Current Frames: ");
 	for (int frame : pageFrames) {
             System.out.print(frame + " ");
         }
 	System.out.println();
-	System.out.println();
+	System.out.println();*/
     }
     
     public void recordSnapShot() {
@@ -163,7 +163,7 @@ public class SecondChance implements Runnable {
         pageFramesPerColumn.add(snapshot);
         
         // for debugging
-        System.out.println("Snapshot: " + pageFramesPerColumn);
+        // System.out.println("Snapshot: " + pageFramesPerColumn);
     }
     
     public void secondChanceReplacement(int page) {
